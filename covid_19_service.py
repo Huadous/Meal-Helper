@@ -3,7 +3,6 @@ import datetime
 import json
 
 from bs4 import BeautifulSoup
-from secrets import API_KEY
 
 class Covid19Service:
     '''
@@ -34,23 +33,47 @@ class Covid19Service:
         self.other_service.clear()
         now = datetime.datetime.now()
         try:
-            with open("./cache/yelp_pages/" + url.replace('.','_').replace('/','&') + '.json', 'r') as f:
+            with open("./cache/covid_services/" + url.replace('.','_').replace('/','&') + '.json', 'r') as f:
                 text = f.read()
-                print("Using Cache")
+                print("Using Cache : covid_services")
                 data = json.loads(text)
                 if not ("time" in data and "html" in data):
                     raise()
                 d = datetime.datetime.strptime(data['time'], '%Y-%m-%d %H:%M:%S')
                 if (now - d).seconds / 3600 > 2.0:
                     raise()
-                text = data["html"]
+                self.curbside_pickup = data['element']['curbside_pickup']
+                self.sit_down_dining = data['element']['sit_down_dining']
+                self.delivery = data['element']['delivery']
+                self.takeout = data['element']['takeout']
+                self.outdoor_seating = data['element']['outdoor_seating']
+                # Health & Safety Measures
+                self.staff_wears_masks = data['element']['staff_wears_masks']
+                self.social_distancing_enforced = data['element']['social_distancing_enforced']
+                self.masks_required = data['element']['masks_required']
+                self.limited_capacity = data['element']['limited_capacity']
+                self.staff_wears_gloves = data['element']['staff_wears_gloves']
+                self.sanitizing_between_customers = data['element']['sanitizing_between_customers']
+                self.temperature_checks = data['element']['temperature_checks']
+                self.hand_sanitizer_provided = data['element']['hand_sanitizer_provided']
+                self.contactless_payments = data['element']['contactless_payments'] 
+                self.other_service = data['element']['other_service']
         except:
-            print("Fetching")
-            r = requests.get(url)
-            text = r.text
-            data_json = {"time" : str(now)[0:19], "html" : text}
-            with open("./cache/yelp_pages/" + url.replace('.','_').replace('/','&') + '.json', 'w', encoding='utf-8') as f:
-                f.write(json.dumps(data_json, indent = 4, ensure_ascii = False))
+            try:
+                with open("./cache/yelp_pages/" + url.replace('.','_').replace('/','&') + '.json', 'r') as f:
+                    text = f.read()
+                    print("Using Cache : yelp_pages")
+                    data = json.loads(text)
+                    if not ("time" in data and "html" in data):
+                        raise()
+                    d = datetime.datetime.strptime(data['time'], '%Y-%m-%d %H:%M:%S')
+                    if (now - d).seconds / 3600 > 2.0:
+                        raise()
+                    text = data["html"]
+            except:
+                print("Fetching")
+                r = requests.get(url)
+                text = r.text
         soup = BeautifulSoup(text, 'html.parser')
 
         service_part = soup.find_all('div', class_ = "margin-t2__373c0__1CFWK border-color--default__373c0__3-ifU")[0:2]
@@ -60,6 +83,32 @@ class Covid19Service:
                 name = str(ele.find('span', class_ = "css-1h1j0y3").contents[0])
                 status = bool(ele.find('span', attrs = {'aria-hidden' : 'true'})['class'][0] == 'icon--24-checkmark-v2')
                 self.updateElement(name, status)
+        # make yelp pages as cache
+        data_yelp_pages_json = {"time" : str(now)[0:19], "html" : text}
+        with open("./cache/yelp_pages/" + url.replace('.','_').replace('/','&') + '.json', 'w', encoding='utf-8') as f:
+            f.write(json.dumps(data_yelp_pages_json, indent = 4, ensure_ascii = False))
+
+        # make covid services as cache
+        element = {
+            'curbside_pickup' : self.curbside_pickup, 
+            'sit_down_dining' : self.sit_down_dining,
+            'delivery' : self.delivery,
+            'takeout' : self.takeout,
+            'outdoor_seating' : self.outdoor_seating,
+            'staff_wears_masks' : self.staff_wears_masks,
+            'social_distancing_enforced' : self.social_distancing_enforced,
+            'masks_required' : self.masks_required,
+            'limited_capacity' : self.limited_capacity,
+            'staff_wears_gloves' : self.staff_wears_gloves,
+            'sanitizing_between_customers' : self.sanitizing_between_customers,
+            'temperature_checks' : self.temperature_checks,
+            'hand_sanitizer_provided' : self.hand_sanitizer_provided,
+            'contactless_payments' : self.contactless_payments,
+            'other_service' : self.other_service
+        }
+        data_covid_services_json = {"time" : str(now)[0:19], "element" : element}
+        with open("./cache/covid_services/" + url.replace('.','_').replace('/','&') + '.json', 'w', encoding='utf-8') as f:
+            f.write(json.dumps(data_covid_services_json, indent = 4, ensure_ascii = False))
 
     def updateElement(self, name, status):
         name_lower = name.lower()
