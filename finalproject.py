@@ -33,5 +33,7 @@ for restaurant_type in restaurant_categories:
     for country in restaurant_type["country_blacklist"]:
         cur.execute(INSERT_RESTAURANT_ITEM, [restaurant_type['title'], restaurant_type['alias'], country])
 
+
+
 conn.commit()
 

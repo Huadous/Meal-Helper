@@ -107,7 +107,7 @@ class restaurant:
             with open("./cache/restaurant_info/" + url.replace('.','_').replace('/','&') + '.json', 'w', encoding='utf-8') as f:
                 f.write(json.dumps(data_restaurant_info_json, indent = 4, ensure_ascii = False))
 
-    def linkToDatabase(self, database):
+    def SyncDatabase(self, database):
         pass
             
 
