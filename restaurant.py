@@ -2,6 +2,7 @@ import covid_19_service
 import datetime
 import requests
 import json
+import sqlite3
 
 from bs4 import BeautifulSoup
 
@@ -22,7 +23,14 @@ class restaurant:
         self.url_real = url_real
         self.covid_service = covid_19_service.Covid19Service()
 
-    def updateRestaurantInfo(self, url):
+    def updateRestaurantInfoByAPI(self, dic):
+        bRestaurantInfo = False
+        now = datetime.datetime.now()
+        
+
+    def updateRestaurantInfoByScraping(self, url):
+        bRestaurantInfo = False
+        bYelpPages = False
         now = datetime.datetime.now()
         try:
             with open("./cache/restaurant_info/" + url.replace('.','_').replace('/','&') + '.json', 'r') as f:
@@ -45,6 +53,7 @@ class restaurant:
                 self.url_yelp = data['element']['url_yelp']
                 self.url_real = data['element']['url_real']
         except:
+            bRestaurantInfo = True
             try:
                 with open("./cache/yelp_pages/" + url.replace('.','_').replace('/','&') + '.json', 'r') as f:
                     text = f.read()
@@ -57,6 +66,7 @@ class restaurant:
                         raise()
                     text = data["html"]
             except:
+                bYelpPages = True
                 print("Fetching")
                 r = requests.get(url)
                 text = r.text
@@ -76,24 +86,31 @@ class restaurant:
         self.url_yelp = url
         self.url_real = soup.find_all('div', class_ = "css-1vhakgw border--top__373c0__3gXLy border-color--default__373c0__3-ifU")[0].find('a').contents[0]
         # make yelp pages as cache
-        data_yelp_pages_json = {"time" : str(now)[0:19], "html" : text}
-        with open("./cache/yelp_pages/" + url.replace('.','_').replace('/','&') + '.json', 'w', encoding='utf-8') as f:
-                f.write(json.dumps(data_yelp_pages_json, indent = 4, ensure_ascii = False))
+        if bRestaurantInfo:
+            data_yelp_pages_json = {"time" : str(now)[0:19], "html" : text}
+            with open("./cache/yelp_pages/" + url.replace('.','_').replace('/','&') + '.json', 'w', encoding='utf-8') as f:
+                    f.write(json.dumps(data_yelp_pages_json, indent = 4, ensure_ascii = False))
+            element = {
+                'name' : self.name,
+                'category' : self.category,
+                'star' : self.star,
+                'phone' : self.phone,
+                'hours' : self.hours,
+                'location' : self.location,
+                'url_location' : self.url_location,
+                'url_yelp' : self.url_yelp,
+                'url_real' : self.url_real,
+            }
+        #make restaurant info as cache
+        if bYelpPages:
+            data_restaurant_info_json = {"time" : str(now)[0:19], "element" : element}
+            with open("./cache/restaurant_info/" + url.replace('.','_').replace('/','&') + '.json', 'w', encoding='utf-8') as f:
+                f.write(json.dumps(data_restaurant_info_json, indent = 4, ensure_ascii = False))
 
-        element = {
-            'name' : self.name, 
-            'category' : self.category,
-            'star' : self.star,
-            'phone' : self.phone,
-            'hours' : self.hours, 
-            'location' : self.location,
-            'url_location' : self.url_location,
-            'url_yelp' : self.url_yelp, 
-            'url_real' : self.url_real,
-        }
-        data_restaurant_info_json = {"time" : str(now)[0:19], "element" : element}
-        with open("./cache/restaurant_info/" + url.replace('.','_').replace('/','&') + '.json', 'w', encoding='utf-8') as f:
-            f.write(json.dumps(data_restaurant_info_json, indent = 4, ensure_ascii = False))
+    def linkToDatabase(self, database):
+        pass
+            
+
     def showStatus(self):
         print("Covid 19 Services:")
         self.covid_service.showStatus()
