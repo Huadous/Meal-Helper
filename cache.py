@@ -33,3 +33,10 @@ def check_time(contents):
     if (now - d).seconds / 3600 > default_period:
         return False
     return True
+
+def sync_cache(name, type):
+    contents = cache.load_cache(name, type)
+    if contents != {}:
+        if cache.check_time(contents):
+            return cache.remove_time_stamp(contents)
+    return {}
