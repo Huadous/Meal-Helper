@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf8"/>
+    <title>Simonhua_finalproject</title>
+</head>
+
+<style>
+.p1 {
+    font-family: "Times New Roman", Times, serif;
+}
+</style>
+
+
+<body>
+    <h1 class="p1">Restaurant selector</h1>
+    <form action="/state" method="POST">
+        <p>
+            Please select a state you are in
+            <select name='state'>
+                {% for state in states %}
+                    <option value = "{{state}}"> {{state}}</option>
+                {% endfor %}
+            </select>
+        </p>
+        <input type="submit" value="Submit"/>
+    </form> 
+    <div class="chart" id="bargraph">
+        <script>
+            var graphs = {{plot | safe}};
+            Plotly.plot('bargraph',graphs,{});
+        </script>
+    </div>
+
+</body>
+</html>
