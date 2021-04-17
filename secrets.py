@@ -1,3 +1,0 @@
-CLIENT_ID = "BEX42dNx4TWww0Mcaxy9T"
-API_KEY = "FiV-x_1KTdYZwr-oh4kEs45zBP_nWKbaTH63tP1yr5rfFod6Ps8x7U_zCa-uxxhSV8udYrgAtGuUOFz9qInfTTtW0Y_vMI7ZC5VIiGyhnT_kSo_xgJOLgHus7edjYHYx"
-

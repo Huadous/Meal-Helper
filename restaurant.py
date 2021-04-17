@@ -3,6 +3,8 @@ import datetime
 import requests
 import json
 import sqlite3
+import database
+import cache
 
 from bs4 import BeautifulSoup
 
@@ -30,15 +32,15 @@ class restaurant:
             self.location = json['location']
             self.phone = json['phone']
             self.display_phone = json['display_phone']
-            self.save_cache(json)
+            cache.save_cache(self.id, 'restaurant_info', json)
             
         elif id !='':
             self.id = id
-            contents = self.load_cache()
+            contents = cache.load_cache(self.id, 'restaurant_info')
 
             if contents != {}:
-                if self.check_time():
-                    cache = self.remove_time_stamp(contents)
+                if cache.check_time(contents):
+                    cache = cache.remove_time_stamp(contents)
                     self.id = cache['id']
                     self.alias = cache['alias']
                     self.name = cache['name']
@@ -74,37 +76,6 @@ class restaurant:
             self.display_phone = ''
         self.showStatus()
         self.covid_service = covid_19_service.Covid19Service()
-
-    def load_cache(self):
-        try:
-            cache_file = open("./cache/restaurant_info/" + self.id + '.json', 'r')
-            cache_file_contents = cache_file.read()
-            cache = json.loads(cache_file_contents)
-            cache_file.close()
-        except:
-            cache = {}
-        return cache
-
-    def save_cache(self, contents):
-        cache_file = open("./cache/restaurant_info/" + self.id + '.json', 'w')
-        contents_to_write = json.dumps(self.add_time_stamp(contents))
-        cache_file.write(contents_to_write)
-        cache_file.close()
-
-    def add_time_stamp(self, contents):
-        now = datetime.datetime.now()
-        contents_with_time = {"time" : str(now)[0:19], "cache" : contents}
-        return contents_with_time
-
-    def remove_time_stamp(self, contents):
-        return contents['cache']
-
-    def check_time(self, contents):
-        now = datetime.datetime.now()
-        d = datetime.datetime.strptime(contents['time'], '%Y-%m-%d %H:%M:%S')
-        if (now - d).seconds / 3600 > 2.0:
-            return False
-        return True
 
     def SyncDatabase(self, database):
         pass
