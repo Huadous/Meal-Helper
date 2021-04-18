@@ -1,11 +1,22 @@
 import json
 import datetime
+import os
 
 default_period = 2.0
 
+def make_path():
+    if not os.path.exists(r'./cache/categories'):
+        os.makedirs(r'./cache/categories')
+    if not os.path.exists(r'./cache/locations'):
+        os.makedirs(r'./cache/locations')
+    if not os.path.exists(r'./cache/covid_services'):
+        os.makedirs(r'./cache/covid_services')
+    if not os.path.exists(r'./cache/restaurant_search'):
+        os.makedirs(r'./cache/restaurant_search')
+
 def load_cache(name, type):
         try:
-            cache_file = open("./cache/" + type + "/" + name + '.json', 'r')
+            cache_file = open("./cache/" + type + "/" + name.replace('/', '_') + '.json', 'r')
             cache_file_contents = cache_file.read()
             cache = json.loads(cache_file_contents)
             cache_file.close()
@@ -14,7 +25,7 @@ def load_cache(name, type):
         return cache
 
 def save_cache(name, type, contents):
-    cache_file = open("./cache/" + type + "/" + name + '.json', 'w')
+    cache_file = open("./cache/" + type + "/" + name.replace('/', '_') + '.json', 'w')
     contents_to_write = json.dumps(add_time_stamp(contents))
     cache_file.write(contents_to_write)
     cache_file.close()
@@ -35,8 +46,8 @@ def check_time(contents):
     return True
 
 def sync_cache(name, type):
-    contents = cache.load_cache(name, type)
+    contents = load_cache(name, type)
     if contents != {}:
-        if cache.check_time(contents):
-            return cache.remove_time_stamp(contents)
+        if check_time(contents):
+            return remove_time_stamp(contents)
     return {}

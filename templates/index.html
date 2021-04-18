@@ -9,6 +9,13 @@
 .p1 {
     font-family: "Times New Roman", Times, serif;
 }
+select{
+    text-align: center;
+    text-align-last: center;
+}
+select option{
+    direction: unset;
+}
 </style>
 
 
@@ -17,20 +24,24 @@
     <form action="/state" method="POST">
         <p>
             Please select a state you are in
-            <select name='state'>
+            <select name='state' >
                 {% for state in states %}
-                    <option value = "{{state}}"> {{state}}</option>
+                    <option value = "{{state[1]}}"> {{state[0]}}</option>
                 {% endfor %}
             </select>
+            <input type="submit" value="Submit"/>
         </p>
-        <input type="submit" value="Submit"/>
     </form> 
-    <div class="chart" id="bargraph">
-        <script>
-            var graphs = {{plot | safe}};
-            Plotly.plot('bargraph',graphs,{});
-        </script>
-    </div>
+    <form action="/city" method="POST">
+        <p>
+            Please select a city you are in
+            <select name='city'>
+            </select>
+            <input type="submit" value="Submit"/>
+        </p>
+       
+    </form> 
+
 
 </body>
 </html>

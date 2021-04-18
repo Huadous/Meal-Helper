@@ -4,6 +4,9 @@ import json
 import restaurant
 import plotly
 import plotly.graph_objs as go
+import database
+import cache
+import yelp_fusion
 
 import pandas as pd
 import numpy as np
@@ -14,66 +17,43 @@ from bs4 import BeautifulSoup
 from secrets import API_KEY
 
 
-headers = {"Authorization": "Bearer {}".format(API_KEY)}
-params = {}
-params['item'] = 'Chinese'
-params['location'] = 'NYU'
 
-business_search_url = 'https://api.yelp.com/v3/businesses/search'
+cache.make_path()
+path = './database/db.sqlite'
+db = database.database(path)
 
 
-r = requests.get(business_search_url, headers=headers, params=params)
-data = json.loads(r.text)
-
-hello = restaurant.restaurant(json=data['businesses'][0])
-
-
-conn = sqlite3.connect("database/db.sqlite")
-cur = conn.cursor()
-
-query = '''
-    SELECT DISTINCT State FROM usStatesAndCities
-    '''
-cur.execute(query)
-result = []
-for row in cur:
-    result.append(row[0])
-print(result)
+# exit()
 
 
 
+# r = requests.get(business_search_url, headers=headers, params=params)
+# data = json.loads(r.text)
 
-def create_plot():
-
-
-    N = 40
-    x = np.linspace(0, 1, N)
-    y = np.random.randn(N)
-    df = pd.DataFrame({'x': x, 'y': y}) # creating a sample dataframe
-
-
-    data = [
-        go.Bar(
-            x=df['x'], # assign x as the dataframe column 'x'
-            y=df['y']
-        )
-    ]
-
-    graphJSON = json.dumps(data, cls=plotly.utils.PlotlyJSONEncoder)
-
-    return graphJSON
+# hello = restaurant.restaurant(json=data['businesses'][0])
 
 
 app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return render_template('index.html',states = result)
+    print(db.get_states_information())
+    return render_template('index.html',states=db.get_states_information())
 
 @app.route('/state', methods=['POST'])
 def state():
-    state = request.form.get('state')
-    return 
+    state_id = request.form.get('state')
+    print(state_id)
+    return render_template('state.html', states=db.get_states_information(), selected_state=state_id, cities=db.get_cities_information_by_state(state_id) )
+
+@app.route('/city', methods=['POST'])
+def city():
+    city_id = request.form.get('city')
+    print(city_id)
+    # state_id = request.form.get('state')
+    # print(state_id)
+    bar = yelp_fusion.create_average_rating_graph(city_id, db)
+    return render_template('city.html', states=db.get_states_information(), selected_city=city_id, cities=db.get_cities_information_by_state('IL'), plot=bar)
 
 @app.route('/states')
 def handle_the_form():

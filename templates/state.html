@@ -11,29 +11,55 @@
 .p1 {
     font-family: "Times New Roman", Times, serif;
 }
+
+select{
+    text-align: center;
+    text-align-last: center;
+}
+select option{
+    direction: unset;
+}
 </style>
 
 
 <body>
     <h1 class="p1">Restaurant selector</h1>
-    <form action="/states" method="POST">
+    
+        <form action="/state" method="POST">
+            <p>
+                Please select a state you are in
+                <select name='state'>
+                    {% for state in states %}
+                        {% if state[1] == selected_state %}
+                            <option value = "{{state[1]}}" selected="selected"> {{state[0]}}</option>
+                        {% else %}
+                            <option value = "{{state[1]}}"> {{state[0]}}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+                <input type="submit" value="Submit"/>
+            </p>
+        </form> 
+
+    <form action="/city" method="POST">
         <p>
-            Please select a state you are in
-            <select name='state'>
-                {% for state in states %}
-                    <option value = "{{state}}"> {{state}}</option>
+            Please select a city you are in
+            <select name='city'>
+                {% for city in cities %}
+                        <option value = "{{city[0]}}"> {{city[0]}}</option>
                 {% endfor %}
             </select>
+            
         </p>
         <input type="submit" value="Submit"/>
     </form> 
 
-    <div class="chart" id="bargraph">
+    <!-- <div class="chart" id="bargraph">
         <script>
             var graphs = {{plot | safe}};
             Plotly.plot('bargraph',graphs,{});
         </script>
-    </div>
+    </div> -->
 
 </body>
 </html>
