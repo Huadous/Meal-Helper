@@ -10,31 +10,31 @@ https://github.com/Huadous/final-project
 
 1. **Origin** : [Documentation](https://www.yelp.com/developers/documentation/v3/all_category_list)  [Download](https://www.yelp.com/developers/documentation/v3/all_category_list/categories.json)
 
-	<img src="./images/image-20210418195907447.png" alt="image-20210418195907447" style="zoom: 15%;" />
+<img src="./images/image-20210419222358491.png" alt="image-20210419222358491" style="zoom:13%;" />
 
 2. **Format** : JSON(> 1000 records)
 
 3. **Data access and caching** : downloaded directly without additional verification methods, I used cache.
 
-4. **Summary of data** : [$\approx 1500$ I will use 192]
+3. **Summary of data** : [$\approx 1500$ I will use 192]
 
-  It contains information about categories and available countries. Therefore, this data can be used as a benchmark for restaurant category search. Because this is an all-category file, which contains not only the categories of restaurants. What I need to do is to filter out the category of the restaurant from all categories.
+	  It contains information about categories and available countries. Therefore, this data can be used as a benchmark for restaurant category search. Because this is an all-category file, which contains not only the categories of restaurants. What I need to do is to filter out the category of the restaurant from all categories.
 
-  **Important fields**:
+	  **Important fields** :
 
-  *   *"alias"* : alias of the child category, offer a different name for title.
+	* *"alias"* : alias of the child category, offer a different name for title.
 
-  *   *"title"* : title of the child category and will be used to find different type of restaurant.
+	* *"title"* : title of the child category and will be used to find different type of restaurant.
 
-  *   *"parents"* : belongs to what parent category. The program use this to find which category belongs to restaurants.
+	* *"parents"* : belongs to what parent category. The program use this to find which category belongs to restaurants.
 
-  *   *"country_whitelist"* : available countries (without this field means TO ALL THE COUNTRIES)
+	* *"country_whitelist"* : available countries (without this field means TO ALL THE COUNTRIES)
 
-5. **Evidence of caching **
+4. **Evidence of caching **
 
-	<img src="./images/image-20210418194300556.png" alt="image-20210418194300556" style="zoom: 20%;" />
+  <img src="./images/image-20210418194300556.png" alt="image-20210418194300556" style="zoom: 20%;" />
 
-	<img src="./images/image-20210418194348984.png" alt="image-20210418194348984" style="zoom: 20%;" />
+  <img src="./images/image-20210419220929078.png" alt="image-20210419220929078" style="zoom: 20%;" />
 
 #### *ISO 3166-1 alpha-2 code*
 
@@ -48,18 +48,19 @@ https://github.com/Huadous/final-project
 
 4. **Summary of data** :  [$\approx250$ I will use all of them]
 
-  Because in the previous category file, there will be information about different restaurant categories in which countries provide search services. Therefore, it is necessary to use the abbreviations of the names of each country in this file to determine whether the restaurant in this category can be searched in the United States
+	  Because in the previous category file, there will be information about different restaurant categories in which countries provide search services. Therefore, it is necessary to use the abbreviations of the names of each country in this file to determine whether the restaurant in this category can be searched in the United States
 
-  **Important fields** :
+	  **Important fields** :
 
-  *   *"Code"* : code of the country, this field is the same as the *"country_whitelist"* and improve its readability by providing the full name of the country.
-  *   *"Name"* : name of the country, which is better for human reading.
+	* *"Code"* : code of the country, this field is the same as the *"country_whitelist"* and improve its readability by providing the full name of the country.
+
+	* *"Name"* : name of the country, which is better for human reading.
 
 5. **Evidence of caching **
 
-  <img src="./images/image-20210418195102681.png" alt="image-20210418195102681" style="zoom: 20%;" />
+<img src="./images/image-20210418195102681.png" alt="image-20210418195102681" style="zoom: 20%;" />
 
-  <img src="./images/image-20210418195157770.png" alt="image-20210418195157770" style="zoom: 20%;" />
+<img src="./images/image-20210419221005401.png" alt="image-20210419221005401" style="zoom:20%;" />
 
 #### *United States Cities Database*
 
@@ -85,9 +86,11 @@ https://github.com/Huadous/final-project
 
 5. **Evidence of caching**
 
-  <img src="./images/image-20210418222459315.png" alt="image-20210418222459315" style="zoom: 20%;" />
+<img src="./images/image-20210418222459315.png" alt="image-20210418222459315" style="zoom: 20%;" />
 
-  <img src="./images/image-20210418222603292.png" alt="image-20210418222603292" style="zoom: 20%;" />
+<img src="./images/image-20210419221119333.png" alt="image-20210419221119333" style="zoom: 20%;" />
+
+
 
 #### *Using API key to get base information and do analysis*
 
@@ -115,15 +118,15 @@ https://github.com/Huadous/final-project
 
 5. **Evidence of caching**
 
-  <img src="./images/image-20210418223128312.png" alt="image-20210418223128312" style="zoom: 20%;" />
+<img src="./images/image-20210418223128312.png" alt="image-20210418223128312" style="zoom: 20%;" />
 
-  <img src="./images/image-20210418223202129.png" alt="image-20210418223202129" style="zoom: 20%;" />
+<img src="./images/image-20210419221153260.png" alt="image-20210419221153260" style="zoom:20%;" />
 
 #### *Crawling and scraping multiple pages in Yelp to gain information related covid-19*
 
 1. **Origin** : website : `https://www.yelp.com/`
 
-	<img src="./images/image-20210418225608417.png" alt="image-20210418225608417" style="zoom: 20%;" />
+	<img src="./images/image-20210418225608417.png" alt="image-20210418225608417" style="zoom: 15%;" />
 
 2. **Format** : Html
 
@@ -140,9 +143,9 @@ https://github.com/Huadous/final-project
 
 5. **Evidence of caching**
 
-  <img src="./images/image-20210418230211053.png" alt="image-20210418230211053" style="zoom: 15%;" />
+<img src="./images/image-20210419221405740.png" alt="image-20210419221405740" style="zoom: 20%;" />
 
-  <img src="./images/image-20210418230128992.png" alt="image-20210418230128992" style="zoom: 15%;" />
+<img src="./images/image-20210419221658998.png" alt="image-20210419221658998" style="zoom:15%;" />
 
 ## Database
 
@@ -261,7 +264,7 @@ This is a table that records each search, which contains necessary information i
 
 A program that lets a user choose a specific state and a city and see the average ratings for different restaurant types from Yelp as **plotly bar**.  You can see it from the pic below. However, This is only a draft version and not the final version.You can select a state at first and submit, then a city and submit. The program will generate the bar plot by the state and the city you provided.
 
-<img src="./images/image-20210419121533599.png" alt="image-20210419121533599" style="zoom: 15%;" />
+<img src="./images/image-20210419121533599.png" alt="image-20210419121533599" style="zoom: 10%;" />
 
 Then, you can choose a specific type of food, the program will present a useful statistical information about the covid-19 and specific restaurant information presented in a **table** to help you decide where to go. I will only show some useful information in the table.
 
