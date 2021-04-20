@@ -4,6 +4,7 @@ import json
 import cache
 import csv_helper
 import os
+import datetime
 
 from distutils.util import strtobool
 from flask import Flask, render_template
@@ -160,7 +161,6 @@ class database:
                 "is_closed"	INTEGER,
                 "url"	TEXT,
                 "review_count"	INTEGER,
-                "categories"	TEXT,
                 "rating"	REAL,
                 "coordinates_latitude"	REAL,
                 "coordinates_longitude"	REAL,
@@ -176,18 +176,31 @@ class database:
         CREATE TABLE IF NOT EXISTS restaurant_category_fetch (
             "id"	TEXT NOT NULL,
             "category"	TEXT NOT NULL,
-            "city" TEXT NOT NULL
+            "city" TEXT NOT NULL,
+            "time" TEXT NOT NULL
         );'''
         self.cur.execute(CREATE_RESTAURANT_CATEGORY_FETCH)
+        CREATE_RESTAURANT_CATEGORY = '''
+        CREATE TABLE IF NOT EXISTS restaurant_category (
+            "id"	TEXT NOT NULL,
+            "category"	TEXT NOT NULL,
+            "city" TEXT NOT NULL,
+            "unique_str" TEXT NOT NULL,
+            PRIMARY KEY("unique_str")
+        );'''
+        self.cur.execute(CREATE_RESTAURANT_CATEGORY)
         self.conn.commit()
 
     def insert_restaurant_info(self, restaurants, category, city):
         INSERT_RESTAURANT_INFORMATION = '''
         INSERT OR IGNORE INTO restaurant_information
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'''
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'''
         INSERT_RESTAURANT_CATEGORY_FETCH = '''
         INSERT INTO restaurant_category_fetch
-        VALUES (?, ?, ?)'''
+        VALUES (?, ?, ?, ?)'''
+        INSERT_RESTAURANT_CATEGORY = '''
+        INSERT OR REPLACE INTO restaurant_category
+        VALUES (?, ?, ?, ?)'''
         for restaurant in restaurants:
             insert_data = [
                 check_exists('id', restaurant),
@@ -197,7 +210,6 @@ class database:
                 int(check_exists('is_closed', restaurant)),
                 check_exists('url', restaurant),
                 check_exists('review_count', restaurant),
-                json.dumps(check_exists('categories', restaurant)),
                 check_exists('rating', restaurant),
                 check_exists('coordinates', restaurant)['latitude'],
                 check_exists('coordinates', restaurant)['longitude'],
@@ -209,8 +221,10 @@ class database:
             ]
             self.cur.execute(INSERT_RESTAURANT_INFORMATION, insert_data)
             for ele in restaurant['categories']:
-                if category in ele['title']:
-                    self.cur.execute(INSERT_RESTAURANT_CATEGORY_FETCH, [check_exists('id', restaurant), category, city])
+                self.cur.execute(INSERT_RESTAURANT_CATEGORY, [check_exists('id', restaurant), ele['alias'], city, check_exists('id', restaurant) + '_' + ele['alias'] + '_' + city])
+            for ele in restaurant['categories']:
+                if category == ele['alias']:
+                    self.cur.execute(INSERT_RESTAURANT_CATEGORY_FETCH, [check_exists('id', restaurant), category, city, str(datetime.datetime.now())[0:19]])
                     break
 
         self.conn.commit()
@@ -226,12 +240,12 @@ class database:
 
     def get_average_rating_by_category_and_city(self, category, city):
         CREATE_AVERAGE_RATING = '''
-        SELECT avg(rating) 
+        SELECT avg(rating), count(restaurant_category.id)
         FROM restaurant_information
-        JOIN restaurant_category_fetch ON restaurant_information.id = restaurant_category_fetch.id
-        WHERE restaurant_category_fetch.category = '{}' AND restaurant_category_fetch.city = '{}'
+        JOIN restaurant_category ON restaurant_information.id = restaurant_category.id
+        WHERE restaurant_category.category = '{}' AND restaurant_category.city = '{}'
         '''.format(category, city)
-        return self.get_result(CREATE_AVERAGE_RATING, 1)
+        return self.get_result(CREATE_AVERAGE_RATING, 2)
 
     def get_result(self, query, num):
         self.cur.execute(query)
@@ -246,6 +260,6 @@ class database:
         return results
 
     def get_restaurant_category_all(self):
-        SELECT_DISTINCT_RESTAURANT_CATEGORY = "SELECT DISTINCT title FROM restaurant_category_information WHERE country_whitelist = 'US'"
-        return self.get_result(SELECT_DISTINCT_RESTAURANT_CATEGORY, 1)
+        SELECT_DISTINCT_RESTAURANT_CATEGORY = "SELECT DISTINCT alias, title FROM restaurant_category_information WHERE country_whitelist = 'US'"
+        return self.get_result(SELECT_DISTINCT_RESTAURANT_CATEGORY, 2)
 

@@ -8,6 +8,12 @@
 </head>
 
 <style>
+td,th,table{
+  border: 1px solid black;
+}
+table {
+  border-spacing: 1px;
+}
 .p1 {
     font-family: "Times New Roman", Times, serif;
 }
@@ -20,8 +26,6 @@ select option{
     direction: unset;
 }
 </style>
-
-
 <body>
     <h1 class="p1">Restaurant selector</h1>
     <form action="/state" method="POST">
@@ -72,20 +76,25 @@ select option{
         </p>
         
     </form> 
-    <h4>category average ratings </h4>
-    <div class="chart" id="bargraph1">
-        <script>
-            var graphs = {{plot1 | safe}};
-            Plotly.plot('bargraph1',graphs,{});
-        </script>
-    </div>
-    <h4>count data</h4>
-    <div class="chart" id="bargraph2">
-        <script>
-            var graphs = {{plot2 | safe}};
-            Plotly.plot('bargraph2',graphs,{});
-        </script>
-    </div>
+    <h2 class="p1">{{category}}</h2>
+<table style="width: 700px;">
+    <tr>
+        <th class="p1">name</th>
+        <th class="p1">img</th> 
+    </tr>
+    {% for i in range(5) %}
+        <tr>
+            <td>
+                <a href="www.baidu.com">
+                    <div class="p2"> Hello world </div>
+                </a>
+            </td>
+            <td>
+                <img src="https://www.baidu.com/img/flexible/logo/pc/result@2.png" width="200" height="120" />
+            </td>
+        </tr>
+    {% endfor %}
+</table>
 
 </body>
 </html>

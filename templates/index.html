@@ -26,7 +26,11 @@ select option{
             Please select a state you are in
             <select name='state' >
                 {% for state in states %}
-                    <option value = "{{state[1]}}"> {{state[0]}}</option>
+                    {% if state[1] == curState %}
+                        <option value = "{{state[1]}}" selected="selected"> {{state[0]}}</option>
+                    {% else %}
+                        <option value = "{{state[1]}}"> {{state[0]}}</option>
+                    {% endif %}
                 {% endfor %}
             </select>
             <input type="submit" value="Submit"/>
@@ -36,10 +40,17 @@ select option{
         <p>
             Please select a city you are in
             <select name='city'>
+                {% for city in cities %}
+                    {% if city[0] == curCity %}
+                        <option value = "{{city[0]}}" selected="selected"> {{city[0]}}</option>
+                    {% else %}
+                        <option value = "{{city[0]}}"> {{city[0]}}</option>
+                    {% endif %}
+                {% endfor %}
             </select>
             <input type="submit" value="Submit"/>
         </p>
-       
+        
     </form> 
 
 

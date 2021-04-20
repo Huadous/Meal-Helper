@@ -7,6 +7,7 @@ import plotly.graph_objs as go
 import database
 import cache
 import yelp_fusion
+import copy
 
 import pandas as pd
 import numpy as np
@@ -35,71 +36,85 @@ db = database.database(path)
 
 app = Flask(__name__)
 
+curState = 'NY'
+curCity = 'New York'
+curCategory = ''
+curCategoryList = []
+curCategoryList_str = []
+
+
+def copylist(new , old):
+    new = []
+    for i in range(len(old)):
+        new.append(old[i])
+
+
 @app.route('/')
 def index():
-    print(db.get_states_information())
-    return render_template('index.html',states=db.get_states_information())
+    return render_template('index.html',states=db.get_states_information(), cities=db.get_cities_information_by_state(curState), curState=curState, curCity=curCity)
 
 @app.route('/state', methods=['POST'])
 def state():
-    state_id = request.form.get('state')
-    print(state_id)
-    return render_template('state.html', states=db.get_states_information(), selected_state=state_id, cities=db.get_cities_information_by_state(state_id) )
+    curState = request.form.get('state')
+    return render_template('index.html', states=db.get_states_information(), cities=db.get_cities_information_by_state(curState), curState=curState, curCity=curCity)
 
 @app.route('/city', methods=['POST'])
 def city():
-    city_id = request.form.get('city')
-    print(city_id)
-    # state_id = request.form.get('state')
-    # print(state_id)
-    bar = yelp_fusion.create_average_rating_graph(city_id, db)
-    return render_template('city.html', states=db.get_states_information(), selected_city=city_id, cities=db.get_cities_information_by_state('IL'), plot=bar)
+    curCity = request.form.get('city')
+    print(curState)
+    print(curCity)
+    
+    bar1, bar2, xvals, xvals_str= yelp_fusion.create_average_rating_and_count_graph_with_data(curCity, db)
+    copylist(curCategoryList, xvals)
+    copylist(curCategoryList_str, xvals_str)
+    return render_template('city.html', states=db.get_states_information(), curCity=curCity, cities=db.get_cities_information_by_state(curState), curState=curState, categories=curCategoryList, categories_str=curCategoryList_str, total=range(len(xvals)), curCategory=curCategory, plot1=bar1, plot2=bar2)
 
-@app.route('/states')
-def handle_the_form():
-    bar = create_plot()
-    return render_template('state.html', plot=bar)
+@app.route('/table', methods=['POST'])
+def table():
+    curCategory = request.form.get('category')
+    print(curCategoryList)
+    return render_template('table.html', category=curCategory, states=db.get_states_information(), curCity=curCity, cities=db.get_cities_information_by_state(curState), curState=curState, categories=curCategoryList, categories_str=curCategoryList_str, total=range(len(curCategoryList)), curCategory=curCategory)
 
-@app.route('/name/<nm>')  
-def name_nm(nm):
-    return render_template('name.html', name=nm)
+# @app.route('/name/<nm>')  
+# def name_nm(nm):
+#     return render_template('name.html', name=nm)
 
-@app.route('/headlines/<nm>')
-def headlines_nm(nm):
-    url = 'https://api.nytimes.com/svc/topstories/v2/technology.json?api-key=xeFKNh4VSVnb3NXLeVacjQZaBM8GW5js'
-    r = requests.get(url)
-    topFive = json.loads(r.text)['results'][0:6]
-    titles = []
-    for ele in topFive:
-        titles.append(ele['title'])
-        urls.append(ele['url'])
-    return render_template('headlines.html', name=nm, titles=titles)
+# @app.route('/headlines/<nm>')
+# def headlines_nm(nm):
+#     url = 'https://api.nytimes.com/svc/topstories/v2/technology.json?api-key=xeFKNh4VSVnb3NXLeVacjQZaBM8GW5js'
+#     r = requests.get(url)
+#     topFive = json.loads(r.text)['results'][0:6]
+#     titles = []
+#     for ele in topFive:
+#         titles.append(ele['title'])
+#         urls.append(ele['url'])
+#     return render_template('headlines.html', name=nm, titles=titles)
 
-@app.route('/links/<nm>')
-def links_nm(nm):
-    url = 'https://api.nytimes.com/svc/topstories/v2/technology.json?api-key=xeFKNh4VSVnb3NXLeVacjQZaBM8GW5js'
-    r = requests.get(url)
-    topFive = json.loads(r.text)['results'][0:6]
-    titles = []
-    urls = []
-    for ele in topFive:
-        titles.append(ele['title'])
-        urls.append(ele['url'])
-    return render_template('links.html', name=nm, titles=titles, urls=urls)
+# @app.route('/links/<nm>')
+# def links_nm(nm):
+#     url = 'https://api.nytimes.com/svc/topstories/v2/technology.json?api-key=xeFKNh4VSVnb3NXLeVacjQZaBM8GW5js'
+#     r = requests.get(url)
+#     topFive = json.loads(r.text)['results'][0:6]
+#     titles = []
+#     urls = []
+#     for ele in topFive:
+#         titles.append(ele['title'])
+#         urls.append(ele['url'])
+#     return render_template('links.html', name=nm, titles=titles, urls=urls)
 
-@app.route('/images/<nm>')
-def images_nm(nm):
-    url = 'https://api.nytimes.com/svc/topstories/v2/technology.json?api-key=xeFKNh4VSVnb3NXLeVacjQZaBM8GW5js'
-    r = requests.get(url)
-    topFive = json.loads(r.text)['results'][0:6]
-    titles = []
-    urls = []
-    imgs = []
-    for ele in topFive:
-        titles.append(ele['title'])
-        urls.append(ele['url'])
-        imgs.append(ele['multimedia'][0]['url'])
-    return render_template('images.html', name=nm, titles=titles, urls=urls, imgs=imgs)
+# @app.route('/images/<nm>')
+# def images_nm(nm):
+#     url = 'https://api.nytimes.com/svc/topstories/v2/technology.json?api-key=xeFKNh4VSVnb3NXLeVacjQZaBM8GW5js'
+#     r = requests.get(url)
+#     topFive = json.loads(r.text)['results'][0:6]
+#     titles = []
+#     urls = []
+#     imgs = []
+#     for ele in topFive:
+#         titles.append(ele['title'])
+#         urls.append(ele['url'])
+#         imgs.append(ele['multimedia'][0]['url'])
+#     return render_template('images.html', name=nm, titles=titles, urls=urls, imgs=imgs)
 
 if __name__ == '__main__':
     print('starting Flask app', app.name) 

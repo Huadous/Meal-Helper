@@ -27,7 +27,8 @@ def api_search(category, location, offset=0):
             'categories' : category, 
             'location' : location, 
             'offset' : offset,
-            'limit' : 50
+            'limit' : 50,
+            'sort_by' : 'rating'
             }
         r = requests.get(yelp_fusion_business_search_url, headers=headers, params=params)
         api_search = json.loads(r.text)
@@ -52,27 +53,37 @@ def api_search_all_data(category, location, db):
     return data_collection
 
 def create_average_rating(category, city, db):
-    print(db.get_average_rating_by_category_and_city(category, city))
     return db.get_average_rating_by_category_and_city(category, city)[0]
 
-def create_average_rating_graph(city, db):
+def create_average_rating_and_count_graph_with_data(city, db):
     restaurant_category_all = db.get_restaurant_category_all()
     average_rating = []
+    total_number = []
     for category in restaurant_category_all:
-        api_search_all_data(category, city, db)
-        average_rating.append(create_average_rating(category, city, db))
+        api_search_all_data(category[0], city, db)
+        average_rating_data, total_number_data = create_average_rating(category[0], city, db)
+        average_rating.append(average_rating_data)
+        total_number.append(total_number_data)
     print(restaurant_category_all)
     print(average_rating)
-    xvals = []
-    yvals = []
+    print(total_number)
+    xvals1 = []
+    yvals1 = []
+    xvals2 = []
+    yvals2 = []
     for i in range(len(restaurant_category_all)):
         if average_rating[i] != None:
-            yvals.append(average_rating[i])
-            xvals.append(restaurant_category_all[i])
-    yvals, xvals = zip(*sorted(zip(yvals, xvals),reverse=True))
-    print(yvals)
-    print(xvals)
-    bar_data = [go.Bar(x=xvals, y=yvals)]
-    return json.dumps(bar_data, cls=plotly.utils.PlotlyJSONEncoder)
+            yvals1.append(average_rating[i])
+            xvals1.append(restaurant_category_all[i][1])
+            yvals2.append(total_number[i])
+            xvals2.append(restaurant_category_all[i][1])
+    yvals1, xvals1 = zip(*sorted(zip(yvals1, xvals1),reverse=True))
+    bar_data1 = [go.Bar(x=xvals1, y=yvals1)]
+    yvals2, xvals2 = zip(*sorted(zip(yvals2, xvals2),reverse=True))
+    bar_data2 = [go.Bar(x=xvals2, y=yvals2)]
+    xvals_str = []
+    for i in range(len(xvals1)):
+        xvals_str.append(str(i + 1) + ". " + xvals1[i] + " : " + str(round(yvals1[i], 2)))
+    return json.dumps(bar_data1, cls=plotly.utils.PlotlyJSONEncoder), json.dumps(bar_data2, cls=plotly.utils.PlotlyJSONEncoder), xvals1, xvals_str
     
 
