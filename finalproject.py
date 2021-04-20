@@ -13,7 +13,10 @@ import pandas as pd
 import numpy as np
 
 from flask import Flask, render_template, request
+from flask_wtf import Form
+from wtforms import SelectField
 from bs4 import BeautifulSoup
+
 
 from secrets import API_KEY
 
@@ -22,6 +25,10 @@ from secrets import API_KEY
 cache.make_path()
 path = './database/db.sqlite'
 db = database.database(path)
+
+class SelectForm(Form):
+    country = SelectField('Country', choices=[
+        ('us','USA'),('gb','Great Britain'),('ru','Russia')])
 
 
 # exit()
@@ -36,6 +43,8 @@ db = database.database(path)
 
 app = Flask(__name__)
 
+app.config.from_object('config')
+
 curState = 'NY'
 curCity = 'New York'
 curCategory = ''
@@ -48,6 +57,10 @@ def copylist(new , old):
     for i in range(len(old)):
         new.append(old[i])
 
+# @app.route('/new')
+# def new():
+#     form = SelectForm()
+#     return render_template('new.html', form = form )
 
 @app.route('/')
 def index():
