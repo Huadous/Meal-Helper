@@ -189,6 +189,22 @@ class database:
             PRIMARY KEY("unique_str")
         );'''
         self.cur.execute(CREATE_RESTAURANT_CATEGORY)
+        CREATE_SEARCH_INDEX = '''
+        CREATE TABLE IF NOT EXISTS search_index (
+            "id"	INTEGER,
+            "city_id"	TEXT NOT NULL,
+            "state_id"	TEXT NOT NULL,
+            PRIMARY KEY("id" AUTOINCREMENT)
+        );'''
+        self.cur.execute(CREATE_SEARCH_INDEX)
+        CREATE_SEARCH_RESULTS = '''
+        CREATE TABLE IF NOT EXISTS search_results (
+            "id"	INTEGER,
+            "search_index"	INTEGER NOT NULL,
+            "category"	TEXT NOT NULL,
+            PRIMARY KEY("id" AUTOINCREMENT)
+        );'''
+        self.cur.execute(CREATE_SEARCH_RESULTS)
         self.conn.commit()
 
     def insert_restaurant_info(self, restaurants, category, city):
@@ -229,12 +245,46 @@ class database:
 
         self.conn.commit()
 
+    def insert_search_info(self, city_id, state_id, categories):
+        INSERT_SEARCH_INDEX = '''
+        INSERT INTO search_index
+        VALUES (NULL, ?, ?)'''
+        self.cur.execute(INSERT_SEARCH_INDEX, [city_id, state_id])
+        SELECT_SEARCH_INDEX = '''
+        SELECT DISTINCT last_insert_rowid() FROM search_index
+        '''
+        search_index = self.get_result(SELECT_SEARCH_INDEX, 1)
+        INSERT_SEARCH_RESULTS = '''
+        INSERT INTO search_results
+        VALUES (NULL, ?, ?)
+        '''
+        for category in categories:
+            self.cur.execute(INSERT_SEARCH_RESULTS, [search_index, category])
+        self.conn.commit()
+        return search_index
+
+    def get_category_by_search_index(self, search_index):
+        SELECT_SEARCH_RESULTS = '''
+        SELECT category FROM search_results
+        WHERE search_index={}
+        '''.format(search_index)
+        return self.get_result(SELECT_SEARCH_RESULTS, 1)
+
+    def get_city_and_state_by_search_index(self, search_index):
+        SELECT_SEARCH_INDEX = '''
+        SELECT city_id, state_id FROM search_index
+        WHERE id={}
+        '''.format(search_index)
+        print(SELECT_SEARCH_INDEX)
+        return self.get_result(SELECT_SEARCH_INDEX, 2)
+
+
     def get_states_information(self):
         SELECT_STATES_INFORMATION = '''
         SELECT DISTINCT state_name, state_id FROM us_states'''
         return self.get_result(SELECT_STATES_INFORMATION, 2)
 
-    def get_cities_information_by_state(self, state_id):
+    def get_cities_both_information_by_state_id(self, state_id):
         SELECT_CITIES_INFORMATION = 'SELECT DISTINCT city_ascii, id FROM us_states WHERE state_id == "{}"'.format(state_id)
         return self.get_result(SELECT_CITIES_INFORMATION, 2)
 
@@ -257,9 +307,25 @@ class database:
                 results.append(row[0])
             else:
                 results.append(row[0:num])
+
+        if len(results) == 1:
+            return results[0]
         return results
 
     def get_restaurant_category_all(self):
         SELECT_DISTINCT_RESTAURANT_CATEGORY = "SELECT DISTINCT alias, title FROM restaurant_category_information WHERE country_whitelist = 'US'"
         return self.get_result(SELECT_DISTINCT_RESTAURANT_CATEGORY, 2)
 
+    def get_state_name_by_city_id(self, city):
+        SELECT_STATE_NAME = 'SELECT state_name FROM us_states WHERE id == "{}"'.format(city)
+        return self.get_result(SELECT_STATE_NAME, 1)
+    
+    def get_state_id_by_city_id(self, city):
+        SELECT_STATE_ID = 'SELECT state_id FROM us_states WHERE id == "{}"'.format(city)
+        return self.get_result(SELECT_STATE_ID, 1)
+
+    def get_city_name_by_city_id(self, city_id):
+        SELEECT_CITY_NAME = 'SELECT city_ascii FROM us_states WHERE id == "{}"'.format(city_id)
+        return self.get_result(SELEECT_CITY_NAME, 1)
+
+  

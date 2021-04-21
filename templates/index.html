@@ -24,8 +24,8 @@ select option{
 	color: #444;
 	line-height: 1.3;
 	padding: .6em 1.4em .5em .8em;
-	width: 100%;
-	max-width: 100%;
+	width: 30%;
+	max-width: 30%;
 	box-sizing: border-box;
 	margin: 0;
 	border: 1px solid #aaa;
@@ -77,36 +77,35 @@ select option{
 
 <body>
     <h1 class="p1">Restaurant selector</h1>
-    <form action="/state" method="POST">
-        <p>
-            Please select a state you are in
+	<p>
+		<form action="/state" method="POST" id="state">
             <select name='state' onchange="this.form.submit()" class="select-css">
                 {% for state in states %}
-                    {% if state[1] == curState %}
+                    {% if state[1] == state_id %}
                         <option value = "{{state[1]}}" selected="selected"> {{state[0]}}</option>
                     {% else %}
                         <option value = "{{state[1]}}"> {{state[0]}}</option>
                     {% endif %}
                 {% endfor %}
             </select>
-        </p>
-    </form> 
-    <form action="/city" method="POST">
-        <p>
-            Please select a city you are in
-            <select name='city' onchange="this.form.submit()" class="select-css">
-                {% for city in cities %}
-                    {% if city[0] == curCity %}
-                        <option value = "{{city[0]}}" selected="selected"> {{city[0]}}</option>
-                    {% else %}
-                        <option value = "{{city[0]}}"> {{city[0]}}</option>
-                    {% endif %}
-                {% endfor %}
-            </select>
-        </p>
-        
-    </form> 
-
-
+		</form> 
+		<form action="/city" method="POST" id="city">
+				<select name='city' onchange="this.form.submit()" class="select-css">
+					{% for city in cities %}
+						{% if city[1] == city_id %}
+							<option value = "{{city[1]}}" selected="selected"> {{city[0]}}</option>
+						{% else %}
+							<option value = "{{city[1]}}"> {{city[0]}}</option>
+						{% endif %}
+					{% endfor %}
+				</select>
+		</form>
+	</p>
 </body>
 </html>
+<!-- <script type="text/javascript">
+	function submitBoth(x){
+		document.getElementById("state").form.submit();
+		x.form.submit();
+	}
+</script> -->

@@ -43,13 +43,15 @@ class SelectForm(Form):
 
 app = Flask(__name__)
 
-app.config.from_object('config')
+# app.config.from_object('config')
 
-curState = 'NY'
+curState = 'New York'
+state_id = 'NY'
 curCity = 'New York'
-curCategory = ''
-curCategoryList = []
-curCategoryList_str = []
+city_id = '1840034016'
+# curCategory = ''
+# curCategoryList = []
+# curCategoryList_str = []
 
 
 def copylist(new , old):
@@ -64,29 +66,40 @@ def copylist(new , old):
 
 @app.route('/')
 def index():
-    return render_template('index.html',states=db.get_states_information(), cities=db.get_cities_information_by_state(curState), curState=curState, curCity=curCity)
+    return render_template('index.html',states=db.get_states_information(), cities=db.get_cities_both_information_by_state_id(state_id), state_id=state_id, city_id=city_id)
 
 @app.route('/state', methods=['POST'])
 def state():
-    curState = request.form.get('state')
-    return render_template('index.html', states=db.get_states_information(), cities=db.get_cities_information_by_state(curState), curState=curState, curCity=curCity)
+    state_id = request.form.get('state')
+    print("****>" + curState)
+    return render_template('index.html', states=db.get_states_information(), cities=db.get_cities_both_information_by_state_id(state_id), state_id=state_id, city_id='')
 
 @app.route('/city', methods=['POST'])
 def city():
-    curCity = request.form.get('city')
-    print(curState)
+    city_id = request.form.get('city')
+    state_id = db.get_state_id_by_city_id(city_id)
+    curCity = db.get_city_name_by_city_id(city_id)
+    curState = db.get_state_name_by_city_id(city_id)
+    print("----->" + curState)
     print(curCity)
     
-    bar1, bar2, xvals, xvals_str= yelp_fusion.create_average_rating_and_count_graph_with_data(curCity, db)
-    copylist(curCategoryList, xvals)
-    copylist(curCategoryList_str, xvals_str)
-    return render_template('city.html', states=db.get_states_information(), curCity=curCity, cities=db.get_cities_information_by_state(curState), curState=curState, categories=curCategoryList, categories_str=curCategoryList_str, total=range(len(xvals)), curCategory=curCategory, plot1=bar1, plot2=bar2)
+    bar1, bar2, xvals, xvals_str= yelp_fusion.create_average_rating_and_count_graph_with_data(curCity, db, False)
+    search_index = db.insert_search_info(city_id, db.get_state_id_by_city_id(city_id), xvals)
+    curCategory = db.get_category_by_search_index(search_index)
+    return render_template('city.html', states=db.get_states_information(), city_id=city_id, cities=db.get_cities_both_information_by_state_id(state_id), state_id=state_id, categories=curCategory, categories_str=xvals_str, total=range(len(xvals)), curCategory='', plot1=bar1, plot2=bar2)
 
 @app.route('/table', methods=['POST'])
 def table():
-    curCategory = request.form.get('category')
-    print(curCategoryList)
-    return render_template('table.html', category=curCategory, states=db.get_states_information(), curCity=curCity, cities=db.get_cities_information_by_state(curState), curState=curState, categories=curCategoryList, categories_str=curCategoryList_str, total=range(len(curCategoryList)), curCategory=curCategory)
+    search_index = request.form.get('category')
+    print(db.get_city_and_state_by_search_index(search_index))
+    print(db.get_city_name_by_city_id(city_id))
+    print(db.get_state_name_by_city_id(city_id))
+    city_id, state_id = db.get_city_and_state_by_search_index(search_index)[0]
+    curCity = db.get_city_name_by_city_id(city_id)
+    curState = db.get_state_name_by_city_id(city_id)
+    curCategory = db.get_category_by_search_index(search_index)
+    print(curCategory)
+    return render_template('table.html', category=curCategory, states=db.get_states_information(), curCity=curCity, cities=db.get_cities_both_information_by_state_id(curState), curState=curState, categories=curCategory, categories_str=curCategoryList_str, total=range(len(curCategoryList)), curCategory=curCategory)
 
 # @app.route('/name/<nm>')  
 # def name_nm(nm):

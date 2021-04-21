@@ -53,9 +53,9 @@ def api_search_all_data(category, location, db):
     return data_collection
 
 def create_average_rating(category, city, db):
-    return db.get_average_rating_by_category_and_city(category, city)[0]
+    return db.get_average_rating_by_category_and_city(category, city)
 
-def create_average_rating_and_count_graph_with_data(city, db):
+def create_average_rating_and_count_graph_with_data(city, db, dataonly=True): # city_name
     restaurant_category_all = db.get_restaurant_category_all()
     average_rating = []
     total_number = []
@@ -64,9 +64,6 @@ def create_average_rating_and_count_graph_with_data(city, db):
         average_rating_data, total_number_data = create_average_rating(category[0], city, db)
         average_rating.append(average_rating_data)
         total_number.append(total_number_data)
-    print(restaurant_category_all)
-    print(average_rating)
-    print(total_number)
     xvals1 = []
     yvals1 = []
     xvals2 = []
@@ -84,6 +81,8 @@ def create_average_rating_and_count_graph_with_data(city, db):
     xvals_str = []
     for i in range(len(xvals1)):
         xvals_str.append(str(i + 1) + ". " + xvals1[i] + " : " + str(round(yvals1[i], 2)))
+    if dataonly:
+        return xvals1, xvals_str
     return json.dumps(bar_data1, cls=plotly.utils.PlotlyJSONEncoder), json.dumps(bar_data2, cls=plotly.utils.PlotlyJSONEncoder), xvals1, xvals_str
     
 
