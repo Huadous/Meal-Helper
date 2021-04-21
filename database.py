@@ -202,6 +202,7 @@ class database:
             "id"	INTEGER,
             "search_index"	INTEGER NOT NULL,
             "category"	TEXT NOT NULL,
+            "category_str" TEXT NOT NULL,
             PRIMARY KEY("id" AUTOINCREMENT)
         );'''
         self.cur.execute(CREATE_SEARCH_RESULTS)
@@ -245,7 +246,7 @@ class database:
 
         self.conn.commit()
 
-    def insert_search_info(self, city_id, state_id, categories):
+    def insert_search_info(self, city_id, state_id, categories, categories_str):
         INSERT_SEARCH_INDEX = '''
         INSERT INTO search_index
         VALUES (NULL, ?, ?)'''
@@ -256,16 +257,23 @@ class database:
         search_index = self.get_result(SELECT_SEARCH_INDEX, 1)
         INSERT_SEARCH_RESULTS = '''
         INSERT INTO search_results
-        VALUES (NULL, ?, ?)
+        VALUES (NULL, ?, ?, ?)
         '''
-        for category in categories:
-            self.cur.execute(INSERT_SEARCH_RESULTS, [search_index, category])
+        for i in range(len(categories)):
+            self.cur.execute(INSERT_SEARCH_RESULTS, [search_index, categories[i], categories_str[i]])
         self.conn.commit()
         return search_index
 
     def get_category_by_search_index(self, search_index):
         SELECT_SEARCH_RESULTS = '''
         SELECT category FROM search_results
+        WHERE search_index={}
+        '''.format(search_index)
+        return self.get_result(SELECT_SEARCH_RESULTS, 1)
+    
+    def get_category_str_by_search_index(self, search_index):
+        SELECT_SEARCH_RESULTS = '''
+        SELECT category_str FROM search_results
         WHERE search_index={}
         '''.format(search_index)
         return self.get_result(SELECT_SEARCH_RESULTS, 1)

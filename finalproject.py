@@ -72,7 +72,7 @@ def index():
 def state():
     state_id = request.form.get('state')
     print("****>" + curState)
-    return render_template('index.html', states=db.get_states_information(), cities=db.get_cities_both_information_by_state_id(state_id), state_id=state_id, city_id='')
+    return render_template('state.html', states=db.get_states_information(), cities=db.get_cities_both_information_by_state_id(state_id), state_id=state_id, city_id='')
 
 @app.route('/city', methods=['POST'])
 def city():
@@ -84,7 +84,7 @@ def city():
     print(curCity)
     
     bar1, bar2, xvals, xvals_str= yelp_fusion.create_average_rating_and_count_graph_with_data(curCity, db, False)
-    search_index = db.insert_search_info(city_id, db.get_state_id_by_city_id(city_id), xvals)
+    search_index = db.insert_search_info(city_id, db.get_state_id_by_city_id(city_id), xvals, xvals_str)
     curCategory = []
     for category in xvals:
         curCategory.append(str(search_index) + '_' + category)
@@ -95,17 +95,22 @@ def city():
 @app.route('/table', methods=['POST'])
 def table():
     category_index = request.form.get('category')
+    print(category_index)
     search_index, category = category_index.split('_')
     print("^^^^^^>" + search_index)
+    city_id, state_id = db.get_city_and_state_by_search_index(search_index)
     print(db.get_city_and_state_by_search_index(search_index))
     print(db.get_city_name_by_city_id(city_id))
     print(db.get_state_name_by_city_id(city_id))
-    city_id, state_id = db.get_city_and_state_by_search_index(search_index)[0]
     curCity = db.get_city_name_by_city_id(city_id)
     curState = db.get_state_name_by_city_id(city_id)
-    curCategory = db.get_category_by_search_index(search_index)
+    categories = db.get_category_by_search_index(search_index)
+    curCategory_str = db.get_category_str_by_search_index(search_index)
+    curCategory = []
+    for category in categories:
+        curCategory.append(category_index + '_' + category)
     print(curCategory)
-    return render_template('table.html', category=curCategory, states=db.get_states_information(), curCity=curCity, cities=db.get_cities_both_information_by_state_id(curState), curState=curState, categories=curCategory, categories_str=curCategoryList_str, total=range(len(curCategoryList)), curCategory=curCategory)
+    return render_template('table.html', states=db.get_states_information(), city_id=city_id, cities=db.get_cities_both_information_by_state_id(state_id), state_id=state_id, categories=curCategory, categories_str=curCategory_str, total=range(len(curCategory)), curCategory=category_index)
 
 # @app.route('/name/<nm>')  
 # def name_nm(nm):
