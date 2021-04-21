@@ -85,12 +85,18 @@ def city():
     
     bar1, bar2, xvals, xvals_str= yelp_fusion.create_average_rating_and_count_graph_with_data(curCity, db, False)
     search_index = db.insert_search_info(city_id, db.get_state_id_by_city_id(city_id), xvals)
-    curCategory = db.get_category_by_search_index(search_index)
+    curCategory = []
+    for category in xvals:
+        curCategory.append(str(search_index) + '_' + category)
+
+    print(curCategory)
     return render_template('city.html', states=db.get_states_information(), city_id=city_id, cities=db.get_cities_both_information_by_state_id(state_id), state_id=state_id, categories=curCategory, categories_str=xvals_str, total=range(len(xvals)), curCategory='', plot1=bar1, plot2=bar2)
 
 @app.route('/table', methods=['POST'])
 def table():
-    search_index = request.form.get('category')
+    category_index = request.form.get('category')
+    search_index, category = category_index.split('_')
+    print("^^^^^^>" + search_index)
     print(db.get_city_and_state_by_search_index(search_index))
     print(db.get_city_name_by_city_id(city_id))
     print(db.get_state_name_by_city_id(city_id))

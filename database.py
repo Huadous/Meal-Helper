@@ -275,7 +275,6 @@ class database:
         SELECT city_id, state_id FROM search_index
         WHERE id={}
         '''.format(search_index)
-        print(SELECT_SEARCH_INDEX)
         return self.get_result(SELECT_SEARCH_INDEX, 2)
 
 
