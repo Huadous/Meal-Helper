@@ -75,25 +75,30 @@ select option{
 .select-css:disabled:hover, .select-css[aria-disabled=true] {
 	border-color: #aaa;
 }
+#loading { 
+  text-align:center;
+}
 </style>
 
 
 <body>
     <h1 class="p1">Restaurant selector</h1>
-	<p>
 		<form action="/state" method="POST">
-            <select name='state' onchange="this.form.submit()" class="select-css">
-                {% for state in states %}
-                    {% if state[1] == state_id %}
-                        <option value = "{{state[1]}}" selected="selected"> {{state[0]}}</option>
-                    {% else %}
-                        <option value = "{{state[1]}}"> {{state[0]}}</option>
-                    {% endif %}
-                {% endfor %}
-            </select>
+			<div id="select1">
+				<select name='state' onchange="this.form.submit()" class="select-css">
+					{% for state in states %}
+						{% if state[1] == state_id %}
+							<option value = "{{state[1]}}" selected="selected"> {{state[0]}}</option>
+						{% else %}
+							<option value = "{{state[1]}}"> {{state[0]}}</option>
+						{% endif %}
+					{% endfor %}
+				</select>
+			</div>
 		</form> 
 		<form action="/city" method="POST">
-				<select name='city' onchange="this.form.submit()" class="select-css">
+			<div id="select2">
+				<select name='city' onchange="search_city(this);" class="select-css">
 					{% for city in cities %}
 						{% if city[1] == city_id %}
 							<option value = "{{city[1]}}" selected="selected"> {{city[0]}}</option>
@@ -102,11 +107,14 @@ select option{
 						{% endif %}
 					{% endfor %}
 				</select>
+			</div>
 		</form>
+		<div id="loading" style="display:none">
+			<img src="static/loading.gif" />
+		</div>
         <form action="/table" method="POST">
-            <p class="inline">
-                Please select a category you like
-                <select name='category' onchange="this.form.submit()" class="select-css">
+			<div id="select3">
+				<select name='category' onchange="this.form.submit()" class="select-css">
                     {% for i in total %}
                         {% if categories[i] == curCategory %}
                             <option value = "{{categories[i]}}" selected="selected"> {{categories_str[i]}}</option>
@@ -115,19 +123,20 @@ select option{
                         {% endif %}
                     {% endfor %}
                 </select>
-            </p>
+			</div> 
         </form> 
-	</p>
     
-    <h4>category average ratings </h4>
+	<h4 id="bargraph1_title">category average ratings </h4>
     <div class="chart" id="bargraph1">
+		
         <script>
             var graphs = {{plot1 | safe}};
             Plotly.plot('bargraph1',graphs,{});
         </script>
     </div>
-    <h4>count data</h4>
+    <h4 id="bargraph2_title">count data</h4>
     <div class="chart" id="bargraph2">
+		
         <script>
             var graphs = {{plot2 | safe}};
             Plotly.plot('bargraph2',graphs,{});
@@ -136,3 +145,15 @@ select option{
 
 </body>
 </html>
+
+<script type="text/javascript">
+	function search_city(x) {
+		x.form.submit();
+		document.getElementById('loading').style.display='';
+		document.getElementById('select3').style.display="none";
+		document.getElementById('bargraph1').style.display="none";
+		document.getElementById('bargraph2').style.display="none";
+		document.getElementById('bargraph1_title').style.display="none";
+		document.getElementById('bargraph2_title').style.display="none";
+	}
+</script>

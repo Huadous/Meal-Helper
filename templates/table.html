@@ -125,18 +125,26 @@ select option{
 <table style="width: 700px;">
     <tr>
         <th class="p1">name</th>
-        <th class="p1">img</th> 
+        <th class="p1">image</th>
+		<th class="p1">rating</th>
+		<th class="p1">phone</th>
     </tr>
-    {% for i in range(5) %}
+    {% for i in range(table_len) %}
         <tr>
             <td>
-                <a href="www.baidu.com">
-                    <div class="p2"> Hello world </div>
+                <a href="{{table_basic_info[i][1]}}">
+                    <div class="p2"> {{table_basic_info[i][0]}} </div>
                 </a>
             </td>
             <td>
-                <img src="https://www.baidu.com/img/flexible/logo/pc/result@2.png" width="200" height="120" />
+                <img src="{{table_basic_info[i][2]}}" width="200" height="120" />
             </td>
+			<td>
+                <div class="p2"> {{table_basic_info[i][3]}} </div>
+            </td>
+			<td>
+				<div class="p2"> {{table_basic_info[i][4]}} </div>
+			</td>
         </tr>
     {% endfor %}
 </table>

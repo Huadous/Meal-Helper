@@ -10,8 +10,6 @@ import cache
 import pandas as pd
 import numpy as np
 
-from flask import Flask, render_template, request
-from bs4 import BeautifulSoup
 from secrets import API_KEY
 
 
@@ -59,11 +57,13 @@ def create_average_rating_and_count_graph_with_data(city, db, dataonly=True): # 
     restaurant_category_all = db.get_restaurant_category_all()
     average_rating = []
     total_number = []
+    
     for category in restaurant_category_all:
         api_search_all_data(category[0], city, db)
         average_rating_data, total_number_data = create_average_rating(category[0], city, db)
         average_rating.append(average_rating_data)
         total_number.append(total_number_data)
+        print ("\r Loading... [{}/{}]".format(len(total_number), len(restaurant_category_all)), end="")
     xvals1 = []
     yvals1 = []
     xvals2 = []

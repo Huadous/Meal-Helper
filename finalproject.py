@@ -107,10 +107,15 @@ def table():
     categories = db.get_category_by_search_index(search_index)
     curCategory_str = db.get_category_str_by_search_index(search_index)
     curCategory = []
-    for category in categories:
-        curCategory.append(category_index + '_' + category)
+    for ele in categories:
+        curCategory.append(search_index + '_' + ele)
     print(curCategory)
-    return render_template('table.html', states=db.get_states_information(), city_id=city_id, cities=db.get_cities_both_information_by_state_id(state_id), state_id=state_id, categories=curCategory, categories_str=curCategory_str, total=range(len(curCategory)), curCategory=category_index)
+    print(category)
+    category_alias = db.get_category_alias_by_category_title(category)
+    print(category_alias)
+    table_basic_info = db.get_restaurant_table_by_category_and_city(curCity, category_alias) 
+    print(table_basic_info)
+    return render_template('table.html', states=db.get_states_information(), city_id=city_id, cities=db.get_cities_both_information_by_state_id(state_id), state_id=state_id, categories=curCategory, categories_str=curCategory_str, total=range(len(curCategory)), curCategory=category_index, table_basic_info=table_basic_info, table_len=len(table_basic_info))
 
 # @app.route('/name/<nm>')  
 # def name_nm(nm):

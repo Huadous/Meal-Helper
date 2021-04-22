@@ -278,6 +278,13 @@ class database:
         '''.format(search_index)
         return self.get_result(SELECT_SEARCH_RESULTS, 1)
 
+    def get_category_alias_by_category_title(self, category_title):
+        SELECT_SEARCH_RESULTS = '''
+        SELECT DISTINCT alias FROM restaurant_category_information
+        WHERE title="{}"
+        '''.format(category_title)
+        return self.get_result(SELECT_SEARCH_RESULTS, 1)
+
     def get_city_and_state_by_search_index(self, search_index):
         SELECT_SEARCH_INDEX = '''
         SELECT city_id, state_id FROM search_index
@@ -304,7 +311,7 @@ class database:
         '''.format(category, city)
         return self.get_result(CREATE_AVERAGE_RATING, 2)
 
-    def get_result(self, query, num):
+    def get_result(self, query, num, nolist=True):
         self.cur.execute(query)
         results = []
         if num == 0:
@@ -314,10 +321,17 @@ class database:
                 results.append(row[0])
             else:
                 results.append(row[0:num])
-
-        if len(results) == 1:
-            return results[0]
+        if nolist:
+            if len(results) == 1:
+                return results[0]
         return results
+
+    def get_restaurant_table_by_category_and_city(self, city_name, category):
+        SELECT_RESTAURANT_TABLE = '''
+        SELECT name, url, image_url, rating, display_phone FROM restaurant_information
+        JOIN restaurant_category ON restaurant_category.id = restaurant_information.id
+        WHERE restaurant_category.city = "{}" AND restaurant_category.category = "{}"'''.format(city_name, category)
+        return self.get_result(SELECT_RESTAURANT_TABLE, 5, False)
 
     def get_restaurant_category_all(self):
         SELECT_DISTINCT_RESTAURANT_CATEGORY = "SELECT DISTINCT alias, title FROM restaurant_category_information WHERE country_whitelist = 'US'"

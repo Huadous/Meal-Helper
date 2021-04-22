@@ -77,7 +77,6 @@ select option{
 
 <body>
     <h1 class="p1">Restaurant selector</h1>
-	<p>
 		<form action="/state" method="POST" id="state">
             <select name='state' onchange="this.form.submit()" class="select-css">
                 {% for state in states %}
@@ -100,6 +99,5 @@ select option{
 					{% endfor %}
 				</select>
 		</form>
-	</p>
 </body>
 </html>

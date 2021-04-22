@@ -80,7 +80,6 @@ select option{
 
 <body>
     <h1 class="p1">Restaurant selector</h1>
-	<p>
 		<form action="/state" method="POST" id="state">
             <select name='state' onchange="this.form.submit()" class="select-css">
                 {% for state in states %}
@@ -103,9 +102,8 @@ select option{
 					{% endfor %}
 				</select>
 		</form>
-	</p>
     <div id="loading" style="display:none">
-        <img src="https://file.digitaling.com/eImg/uimages/20150907/1441607667576727.gif" />
+        <img src="static/loading.gif" />
     </div>
 </body>
 </html>
