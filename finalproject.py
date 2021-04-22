@@ -9,6 +9,7 @@ import cache
 import yelp_fusion
 import copy
 import yelp_covid
+import folium
 
 import pandas as pd
 import numpy as np
@@ -118,7 +119,18 @@ def table():
     #     covid_info.append([str(dataset[0]), str(dataset[1])])
     covid_info = yelp_covid.make_info_readable(table_basic_info)
 
+    start_coords = (46.9540700, 142.7360300)
+    folium_map = folium.Map(location=start_coords, zoom_start=14)
+    folium_map.save('static/map.html')
+    
     return render_template('table.html', states=db.get_states_information(), city_id=city_id, cities=db.get_cities_both_information_by_state_id(state_id), state_id=state_id, categories=curCategory, categories_str=curCategory_str, total=range(len(curCategory)), curCategory=category_index, table_basic_info=table_basic_info, table_len=len(table_basic_info), covid_info=covid_info)
+
+@app.route('/map')
+def map():
+    start_coords = (46.9540700, 142.7360300)
+    folium_map = folium.Map(location=start_coords, zoom_start=14)
+    folium_map.save('templates/map.html')
+    return render_template('test.html')
 
 # @app.route('/name/<nm>')  
 # def name_nm(nm):

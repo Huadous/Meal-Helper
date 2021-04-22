@@ -124,10 +124,11 @@ select option{
             </p>
         </form> 
 	</p>
+    <input type="button" id="bt_display" value="MAP" onclick="show()"/>
 	<div id="loading" style="display:none">
 		<img src="static/loading.gif" />
 	</div>
-<table style="width: 1500px;" id="table1">
+<table width="1500px" id="table1" style= "display:block">
     <tr>
         <th class="p1">name</th>
         <th class="p1">image</th>
@@ -162,6 +163,8 @@ select option{
     {% endfor %}
 </table>
 
+<iframe id="map" src="static/map.html" width="1500px" height="1000px" style= "display:none"></iframe>
+
 </body>
 </html>
 <script type="text/javascript">
@@ -169,10 +172,23 @@ select option{
 		x.form.submit();
 		document.getElementById('loading').style.display='';
 		document.getElementById('table1').style.display="none";
+        document.getElementById('select3').style.display="none";
+        document.getElementById('bt_display').style.display="none";
+        document.getElementById('table1').style.display="none";
+        document.getElementById('map').style.display="none";
 	}
 	function search_category(x) {
 		x.form.submit();
 		document.getElementById('loading').style.display='';
 		document.getElementById('table1').style.display="none";
+        document.getElementById('bt_display').style.display="none";
+        document.getElementById('table1').style.display="none";
+        document.getElementById('map').style.display="none";
 	}
+    function show(){  
+        display = document.getElementById('map').style.display
+        document.getElementById('map').style.display = (display== "block") ? "none " : "block";
+        display = document.getElementById('table1').style.display
+        document.getElementById('table1').style.display = (display== "block") ? "none " : "block";
+    } 
 </script>
