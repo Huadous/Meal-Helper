@@ -76,8 +76,7 @@ class Covid19Service:
                 text = r.text
         soup = BeautifulSoup(text, 'html.parser')
 
-        service_part = soup.find_all('div', class_ = "margin-t2__373c0__1CFWK border-color--default__373c0__3-ifU")[0:2]
-        # margin-t2__373c0__1CFWK border-color--default__373c0__2oFDT
+        service_part = soup.find_all('div', class_ = "margin-t2__373c0__1CFWK border-color--default__373c0__2oFDT")[0:2]
         for i in range(2):
             data = service_part[i].find_all('div', class_="display--inline-block__373c0__1ZKqC margin-r3__373c0__r37sx margin-b1__373c0__1khoT border-color--default__373c0__3-ifU")
             for ele in data:

@@ -8,6 +8,7 @@ import database
 import cache
 import yelp_fusion
 import copy
+import yelp_covid
 
 import pandas as pd
 import numpy as np
@@ -44,11 +45,6 @@ class SelectForm(Form):
 app = Flask(__name__)
 
 # app.config.from_object('config')
-
-curState = 'New York'
-state_id = 'NY'
-curCity = 'New York'
-city_id = '1840034016'
 # curCategory = ''
 # curCategoryList = []
 # curCategoryList_str = []
@@ -66,13 +62,13 @@ def copylist(new , old):
 
 @app.route('/')
 def index():
-    return render_template('index.html',states=db.get_states_information(), cities=db.get_cities_both_information_by_state_id(state_id), state_id=state_id, city_id=city_id)
+    return render_template('index.html',states=db.get_states_information(), cities=[])
 
 @app.route('/state', methods=['POST'])
 def state():
     state_id = request.form.get('state')
-    print("****>" + curState)
-    return render_template('state.html', states=db.get_states_information(), cities=db.get_cities_both_information_by_state_id(state_id), state_id=state_id, city_id='')
+    print("****>" + state_id)
+    return render_template('state.html', states=db.get_states_information(), cities=db.get_cities_both_information_by_state_id(state_id), state_id=state_id)
 
 @app.route('/city', methods=['POST'])
 def city():
@@ -115,7 +111,14 @@ def table():
     print(category_alias)
     table_basic_info = db.get_restaurant_table_by_category_and_city(curCity, category_alias) 
     print(table_basic_info)
-    return render_template('table.html', states=db.get_states_information(), city_id=city_id, cities=db.get_cities_both_information_by_state_id(state_id), state_id=state_id, categories=curCategory, categories_str=curCategory_str, total=range(len(curCategory)), curCategory=category_index, table_basic_info=table_basic_info, table_len=len(table_basic_info))
+    # covid_info = []
+    # for ele in table_basic_info:
+    #     url = ele[1]
+    #     dataset = yelp_covid.get_covid_info(url)
+    #     covid_info.append([str(dataset[0]), str(dataset[1])])
+    covid_info = yelp_covid.make_info_readable(table_basic_info)
+
+    return render_template('table.html', states=db.get_states_information(), city_id=city_id, cities=db.get_cities_both_information_by_state_id(state_id), state_id=state_id, categories=curCategory, categories_str=curCategory_str, total=range(len(curCategory)), curCategory=category_index, table_basic_info=table_basic_info, table_len=len(table_basic_info), covid_info=covid_info)
 
 # @app.route('/name/<nm>')  
 # def name_nm(nm):

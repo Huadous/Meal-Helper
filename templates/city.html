@@ -109,22 +109,19 @@ select option{
 				</select>
 			</div>
 		</form>
-		<div id="loading" style="display:none">
-			<img src="static/loading.gif" />
-		</div>
         <form action="/table" method="POST">
 			<div id="select3">
-				<select name='category' onchange="this.form.submit()" class="select-css">
+				<select name='category' onchange="search_category(this);" class="select-css">
+					<option value="" disabled selected>Select your category</option>
                     {% for i in total %}
-                        {% if categories[i] == curCategory %}
-                            <option value = "{{categories[i]}}" selected="selected"> {{categories_str[i]}}</option>
-                        {% else %}
-                            <option value = "{{categories[i]}}"> {{categories_str[i]}}</option>
-                        {% endif %}
+                        <option value = "{{categories[i]}}"> {{categories_str[i]}}</option>
                     {% endfor %}
                 </select>
 			</div> 
         </form> 
+		<div id="loading" style="display:none">
+			<img src="static/loading.gif" />
+		</div>
     
 	<h4 id="bargraph1_title">category average ratings </h4>
     <div class="chart" id="bargraph1">
@@ -151,6 +148,14 @@ select option{
 		x.form.submit();
 		document.getElementById('loading').style.display='';
 		document.getElementById('select3').style.display="none";
+		document.getElementById('bargraph1').style.display="none";
+		document.getElementById('bargraph2').style.display="none";
+		document.getElementById('bargraph1_title').style.display="none";
+		document.getElementById('bargraph2_title').style.display="none";
+	}
+	function search_category(x) {
+		x.form.submit();
+		document.getElementById('loading').style.display='';
 		document.getElementById('bargraph1').style.display="none";
 		document.getElementById('bargraph2').style.display="none";
 		document.getElementById('bargraph1_title').style.display="none";

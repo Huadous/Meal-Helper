@@ -92,15 +92,12 @@ select option{
             </select>
 		</form> 
 		<form action="/city" method="POST" id="city">
-				<select name='city' onchange="this.form.submit();document.getElementById('loading').style.display='';" class="select-css">
-					{% for city in cities %}
-						{% if city[1] == city_id %}
-							<option value = "{{city[1]}}" selected="selected"> {{city[0]}}</option>
-						{% else %}
-							<option value = "{{city[1]}}"> {{city[0]}}</option>
-						{% endif %}
-					{% endfor %}
-				</select>
+			<select name='city' onchange="this.form.submit()" class="select-css">
+					<option value="" disabled selected>Select your city</option>
+				{% for city in cities %}
+					<option value = "{{city[1]}}"> {{city[0]}}</option>
+				{% endfor %}
+			</select>
 		</form>
     <div id="loading" style="display:none">
         <img src="static/loading.gif" />

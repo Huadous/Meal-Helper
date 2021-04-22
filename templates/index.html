@@ -79,23 +79,17 @@ select option{
     <h1 class="p1">Restaurant selector</h1>
 		<form action="/state" method="POST" id="state">
             <select name='state' onchange="this.form.submit()" class="select-css">
+				<option value="" disabled selected>Select your state</option>
                 {% for state in states %}
-                    {% if state[1] == state_id %}
-                        <option value = "{{state[1]}}" selected="selected"> {{state[0]}}</option>
-                    {% else %}
-                        <option value = "{{state[1]}}"> {{state[0]}}</option>
-                    {% endif %}
+                    <option value = "{{state[1]}}"> {{state[0]}}</option>
                 {% endfor %}
             </select>
 		</form> 
 		<form action="/city" method="POST" id="city">
 				<select name='city' onchange="this.form.submit()" class="select-css">
+						<option value="" disabled selected>Select your city</option>
 					{% for city in cities %}
-						{% if city[1] == city_id %}
-							<option value = "{{city[1]}}" selected="selected"> {{city[0]}}</option>
-						{% else %}
-							<option value = "{{city[1]}}"> {{city[0]}}</option>
-						{% endif %}
+						<option value = "{{city[1]}}"> {{city[0]}}</option>
 					{% endfor %}
 				</select>
 		</form>
