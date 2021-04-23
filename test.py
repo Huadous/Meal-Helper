@@ -2,6 +2,9 @@
 import webbrowser as wb
 import folium
 from folium import CustomIcon
+
+import numpy as np
+import pandas as pd
  
  
 def draw_custom_icon(map, loc):
@@ -27,6 +30,33 @@ def get_map():
     map.save('m.html')
     wb.open('m.html')
  
- 
+
+
+
+
 if __name__ == '__main__':
-    get_map()
+    # get_map()
+
+
+    center_point = [40.72796324125046, -73.97619992872274]
+
+    data = (
+        np.random.normal(size=(100, 2)) *
+        np.array([[.5, .5]]) +
+        np.array([center_point])
+    )
+
+    df = pd.DataFrame(data, columns=['Lat', 'Long'])
+
+
+    m = folium.Map(df[['Lat', 'Long']].mean().values.tolist())
+
+    for lat, lon in zip(df['Lat'], df['Long']):
+        folium.Marker([lat, lon]).add_to(m)
+
+
+    sw = df[['Lat', 'Long']].min().values.tolist()
+    ne = df[['Lat', 'Long']].max().values.tolist()
+
+    m.fit_bounds([sw, ne]) 
+    m.save('test.html') 

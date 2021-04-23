@@ -9,22 +9,16 @@
 
 <style>
 td,th,table{
-  border: 1px solid black;
+	border: 1px solid black;
 }
 table {
-  border-spacing: 1px;
-}
-.p1 {
-    font-family: "Times New Roman", Times, serif;
+	border-spacing: 1px;
 }
 .inline{ display:inline } 
-/* select{
-    text-align: center;
-    text-align-last: center;
+.p1 {
+	color: cornsilk;
 }
-select option{
-    direction: unset;
-} */
+
 .select-css {
 	display: block;
 	font-size: 16px;
@@ -33,8 +27,8 @@ select option{
 	color: #444;
 	line-height: 1.3;
 	padding: .6em 1.4em .5em .8em;
-	width: 30%;
-	max-width: 30%;
+	width: 100%;
+	max-width: 100%;
 	box-sizing: border-box;
 	margin: 0;
 	border: 1px solid #aaa;
@@ -45,7 +39,7 @@ select option{
 	appearance: none;
 	background-color: #fff;
 	background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007CB2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'),
-	  linear-gradient(to bottom, #ffffff 0%,#e5e5e5 100%);
+	linear-gradient(to bottom, #ffffff 0%,#e5e5e5 100%);
 	background-repeat: no-repeat, repeat;
 	background-position: right .7em top 50%, 0 0;
 	background-size: .65em auto, 100%;
@@ -71,99 +65,280 @@ select option{
 	background-position: left .7em top 50%, 0 0;
 	padding: .6em .8em .5em 1.4em;
 }
-
+	
 /* Disabled styles */
 .select-css:disabled, .select-css[aria-disabled=true] {
 	color: graytext;
 	background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22graytext%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'),
-	  linear-gradient(to bottom, #ffffff 0%,#e5e5e5 100%);
+	linear-gradient(to bottom, #ffffff 0%,#e5e5e5 100%);
 }
 .select-css:disabled:hover, .select-css[aria-disabled=true] {
 	border-color: #aaa;
 }
-#loading { 
-  text-align:center;
+	
+* {
+	padding: 0;
+	margin: 0;
+	box-sizing: border-box;
 }
+	
+.header {
+	width: 100%;
+	height: 85px;
+	background-size: cover;
+}
+	
+.nav {
+	width: 100%;
+	padding: 20px;
+	position: fixed;
+	background-color:crimson;
+	top: 0;
+	text-align: center;
+	transition: .5s;
+}
+	
+.father{
+	width:22%;
+	height:42px;
+	display:table-cell;
+	text-align:center;
+	vertical-align:middle;
+	/* background-color:red; */
+	display: inline-block;
+}
+.father1{
+	width:10%;
+	height:42px;
+	display:table-cell;
+	text-align:center;
+	vertical-align:middle;
+	/* background-color:red; */
+	display: inline-block;
+}
+.son{
+	width:80%;
+	height:100%;
+	display:inline-block;
+	/* background-color:teal; */
+}
+.button { 
+	display: inline-block; 
+	border-radius: 4px; 
+	background-color: #f4511e; 
+	border: none; 
+	color: #FFFFFF; 
+	text-align: center; 
+	font-size: 15px; 
+	padding: 11px; 
+	width: 100px; 
+	transition: all 0.5s; 
+	cursor: pointer; 
+	margin: 0px; 
+	vertical-align:middle;
+}
+.button span { 
+	cursor: pointer; 
+	display: inline-block; 
+	position: relative; 
+	transition: 0.5s;
+}
+.button span:after { 
+	content: '»'; 
+	position: absolute; 
+	opacity: 0; 
+	top: 1px; 
+	right: -20px; 
+	transition: 0.5s;
+}
+.button:hover span { 
+	padding-right: 25px;
+}
+.button:hover span:after { 
+	opacity: 1; 
+	right: 0;
+}
+	
+#loading { 
+	text-align:center;
+}
+
+*, *:before, *:after {
+	box-sizing:border-box;
+}
+
+h1,h2,h3,h4,h5,h6 {
+	margin:0;
+}
+
+.container {
+	max-width: 90%;
+	margin-right:auto;
+	margin-left:auto;
+	display:flex;
+	justify-content:center;
+	align-items:center;
+	min-height:100vh;
+}
+
+.table {
+	width:100%;
+	border:1px solid #EEEEEE;
+}
+
+.table-header {
+	height: 40px;
+	display:flex;
+	width:100%;
+	background:#000;
+	padding:( 12px * 1.5) 0;
+}
+
+.table-row {
+	display:flex;
+	width:100%;
+	padding:( 12px * 1.5) 0;
+	background:white;
+}
+
+.table-data, .header__item {
+	flex: 1 1 20%;
+	text-align:center;
+	vertical-align:middle;
+}
+
+.table-row:nth-of-type(odd) {
+	background:#e5e5e5;
+}
+
+.header__item {
+	text-transform:uppercase;
+	padding: 8px;
+}
+
+.filter__link {
+	color:white;
+	text-decoration: none;
+	display:inline-block;
+	padding-left: 24px;
+	padding-right: 24px;
+}
+
+
 </style>
-<body>
-    <h1 class="p1">Restaurant selector</h1>
-	<p>
-		<form action="/state" method="POST">
-            <select name='state' onchange="this.form.submit()" class="select-css">
-                {% for state in states %}
-                    {% if state[1] == state_id %}
-                        <option value = "{{state[1]}}" selected="selected"> {{state[0]}}</option>
-                    {% else %}
-                        <option value = "{{state[1]}}"> {{state[0]}}</option>
-                    {% endif %}
-                {% endfor %}
-            </select>
-		</form> 
-		<form action="/city" method="POST">
-				<select name='city' onchange="search_city(this);" class="select-css">
-					{% for city in cities %}
-						{% if city[1] == city_id %}
-							<option value = "{{city[1]}}" selected="selected"> {{city[0]}}</option>
-						{% else %}
-							<option value = "{{city[1]}}"> {{city[0]}}</option>
-						{% endif %}
-					{% endfor %}
-				</select>
-		</form>
-        <form action="/table" method="POST">
-            <p class="inline">
-                <select name='category' onchange="search_category(this);" class="select-css">
-                    {% for i in total %}
-                        {% if categories[i] == curCategory %}
-                            <option value = "{{categories[i]}}" selected="selected"> {{categories_str[i]}}</option>
-                        {% else %}
-                            <option value = "{{categories[i]}}"> {{categories_str[i]}}</option>
-                        {% endif %}
-                    {% endfor %}
-                </select>
-            </p>
-        </form> 
-	</p>
-    <input type="button" id="bt_display" value="MAP" onclick="show()"/>
+	
+	
+	<body>
+		<div class="header">
+			<div class="nav">
+				<div class="father">
+					<div class="son">
+						<h1 class="p1">Restaurant Helper</h1>
+					</div>
+				</div>
+				<div class="father">
+					<div class="son">
+						<form action="/state" method="POST">
+							<select name='state' onchange="this.form.submit()" class="select-css">
+								{% for state in states %}
+									{% if state[1] == state_id %}
+										<option value = "{{state[1]}}" selected="selected"> {{state[0]}}</option>
+									{% else %}
+										<option value = "{{state[1]}}"> {{state[0]}}</option>
+									{% endif %}
+								{% endfor %}
+							</select>
+						</form> 
+					</div>
+				</div>
+				<div class="father">
+					<div class="son">
+						<form action="/city" method="POST">
+							<select name='city' onchange="search_city(this);" class="select-css">
+								{% for city in cities %}
+									{% if city[1] == city_id %}
+										<option value = "{{city[1]}}" selected="selected"> {{city[0]}}</option>
+									{% else %}
+										<option value = "{{city[1]}}"> {{city[0]}}</option>
+									{% endif %}
+								{% endfor %}
+							</select>
+					</form>
+					</div>
+				</div>
+				<div class="father">
+					<div class="son">
+						<form action="/table" method="POST">
+							<p class="inline">
+								<select name='category' onchange="search_category(this);" class="select-css">
+									{% for i in total %}
+										{% if categories[i] == curCategory %}
+											<option value = "{{categories[i]}}" selected="selected"> {{categories_str[i]}}</option>
+										{% else %}
+											<option value = "{{categories[i]}}"> {{categories_str[i]}}</option>
+										{% endif %}
+									{% endfor %}
+								</select>
+							</p>
+						</form> 
+					</div>
+				</div>
+				<div class="father1">
+					<div class="son">
+						<button class="button" id="bt_display" onclick="show()">
+							<span>
+								Map
+							</span>
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+	<br>
+	<br>
 	<div id="loading" style="display:none">
 		<img src="static/loading.gif" />
 	</div>
-<table width="1500px" id="table1" style= "display:block">
-    <tr>
-        <th class="p1">name</th>
-        <th class="p1">image</th>
-		<th class="p1">rating</th>
-		<th class="p1">Updated Services</th>
-		<th class="p1">Health & Safety Measures</th>
-		<th class="p1">phone</th>
-    </tr>
-    {% for i in range(table_len) %}
-        <tr>
-            <td>
-                <a href="{{table_basic_info[i][1]}}">
-                    <div class="p2"> {{table_basic_info[i][0]}} </div>
-                </a>
-            </td>
-            <td>
-                <img src="{{table_basic_info[i][2]}}" width="200" height="120" />
-            </td>
-			<td>
-                <div class="p2"> {{table_basic_info[i][3]}} </div>
-            </td>
-			<td>
-				<div class="p2"> {{covid_info[i][0]|safe}} </div>
-			</td>
-			<td>
-				<div class="p2"> {{covid_info[i][1]|safe}} </div>
-			</td>
-			<td>
-				<div class="p2"> {{table_basic_info[i][4]}} </div>
-			</td>
-        </tr>
-    {% endfor %}
-</table>
 
-<iframe id="map" src="static/map.html" width="1500px" height="1000px" style= "display:none"></iframe>
+
+	<div class="container" id="table1" style= "display:block">
+	
+		<div class="table">
+			<div class="table-header">
+				<div class="header__item"><a id="name" class="filter__link" href="#">name</a></div>
+				<div class="header__item"><a id="wins" class="filter__link filter__link--number" href="#">image</a></div>
+				<div class="header__item"><a id="draws" class="filter__link filter__link--number" href="#">rating</a></div>
+				<div class="header__item"><a id="losses" class="filter__link filter__link--number" href="#">Updated Services</a></div>
+				<div class="header__item"><a id="total" class="filter__link filter__link--number" href="#">Health & Safety</a></div>
+				<div class="header__item"><a id="total" class="filter__link filter__link--number" href="#">phone</a></div>
+				<div class="header__item"><a id="total" class="filter__link filter__link--number" href="#">details</a></div>
+			</div>
+			<div class="table-content">	
+				{% for i in range(table_len) %}
+					<div class="table-row">		
+						<div class="table-data">
+							<a href="{{table_basic_info[i][1]}}">{{table_basic_info[i][0]}}</a>
+						</div>
+						<div class="table-data">
+							<img src="{{table_basic_info[i][2]}}" width="200" height="120" />
+						</div>
+						<div class="table-data">{{table_basic_info[i][3]}}</div>
+						<div class="table-data">{{covid_info[i][0]|safe}}</div>
+						<div class="table-data">{{covid_info[i][1]|safe}}</div>
+						<div class="table-data">{{table_basic_info[i][4]}}</div>
+						<div class="table-data">Click here</div>
+					</div>
+				{% endfor %}
+			</div>	
+		</div>
+	</div>
+
+<div id="map" width="90%" height="90%" style= "display:none; text-align: center;">
+	<iframe src="{{ url_for('show_map', id = time_stamp) }}" width="90%" height="750px"></iframe>
+</div>
+
 
 </body>
 </html>

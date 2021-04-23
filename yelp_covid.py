@@ -7,11 +7,16 @@ import plotly.graph_objs as go
 import database
 import cache
 import re
+import folium
+import folium
+import time
+
 
 import pandas as pd
 import numpy as np
 
 from bs4 import BeautifulSoup
+from folium import CustomIcon
 
 
 def visit_by_url(url):
@@ -68,3 +73,44 @@ def make_info_readable(table_basic_info):
         print(string_1)
         print(string_2)
     return covid_info
+
+# def draw_custom_icon(m, restaurant_locations_data):
+#     for data in restaurant_locations_data:
+#         marker = folium.Marker(
+#             location=[data[1], data[2]], 
+#             popup=data[0],
+#             icon=folium.Icon(color="red",icon="glyphicon glyphicon-cutlery")).add_to(m)
+        # folium.Marker(
+        # location=[25.0431, 121.539723], 
+        # icon=folium.Icon(color="red",icon="fa-truck", prefix='fa')).add_to(m)
+ 
+def get_map(city_location, restaurant_locations_data):
+    df = pd.DataFrame(restaurant_locations_data, columns=['name', 'Lat', 'Long'])
+    
+    m = folium.Map(df[['Lat', 'Long']].mean().values.tolist(),  # 地图中心
+                     tiles='OpenStreetMap')  # stamentoner,Stamen Watercolor,OpenStreetMap'
+
+
+    for name, lat, lon in zip(df['name'], df['Lat'], df['Long']):
+        folium.Marker(
+            location=[lat, lon], 
+            popup=name,
+            icon=folium.Icon(color="red",icon="glyphicon glyphicon-cutlery")).add_to(m)
+
+    print(df)
+    print(df[['Lat', 'Long']].mean().values.tolist())
+
+    sw = df[['Lat', 'Long']].min().values.tolist()
+    ne = df[['Lat', 'Long']].max().values.tolist()
+    print(sw)
+    print(ne)
+
+    # m.fit_bounds([sw, ne]) 
+    
+
+    print([sw, ne])
+    #m.fit_bounds([ [41.72796324125046, -74.97619992872274], [39.72796324125046, -72.97619992872274]])
+
+    time_stamp = time.time()
+    m.save('maps/' + str(time_stamp) + '.html')
+    return time_stamp

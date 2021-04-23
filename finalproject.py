@@ -10,11 +10,12 @@ import yelp_fusion
 import copy
 import yelp_covid
 import folium
+import time
 
 import pandas as pd
 import numpy as np
 
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, send_file, url_for
 from flask_wtf import Form
 from wtforms import SelectField
 from bs4 import BeautifulSoup
@@ -49,7 +50,6 @@ app = Flask(__name__)
 # curCategory = ''
 # curCategoryList = []
 # curCategoryList_str = []
-
 
 def copylist(new , old):
     new = []
@@ -118,19 +118,46 @@ def table():
     #     dataset = yelp_covid.get_covid_info(url)
     #     covid_info.append([str(dataset[0]), str(dataset[1])])
     covid_info = yelp_covid.make_info_readable(table_basic_info)
-
-    start_coords = (46.9540700, 142.7360300)
-    folium_map = folium.Map(location=start_coords, zoom_start=14)
-    folium_map.save('static/map.html')
+    city_location = db.get_city_location_by_city_id(city_id)
+    restaurant_locations_data = db.get_restaurant_location_and_name_by_category_and_city(curCity, category_alias)
+    time_stamp = yelp_covid.get_map(city_location, restaurant_locations_data)
     
-    return render_template('table.html', states=db.get_states_information(), city_id=city_id, cities=db.get_cities_both_information_by_state_id(state_id), state_id=state_id, categories=curCategory, categories_str=curCategory_str, total=range(len(curCategory)), curCategory=category_index, table_basic_info=table_basic_info, table_len=len(table_basic_info), covid_info=covid_info)
+    return render_template('table.html', states=db.get_states_information(), city_id=city_id, cities=db.get_cities_both_information_by_state_id(state_id), state_id=state_id, categories=curCategory, categories_str=curCategory_str, total=range(len(curCategory)), curCategory=category_index, table_basic_info=table_basic_info, table_len=len(table_basic_info), covid_info=covid_info, time_stamp=time_stamp)
 
-@app.route('/map')
-def map():
-    start_coords = (46.9540700, 142.7360300)
-    folium_map = folium.Map(location=start_coords, zoom_start=14)
-    folium_map.save('templates/map.html')
-    return render_template('test.html')
+
+@app.route('/maps/<id>')
+def show_map(id):
+    return send_file('./maps/' + str(id) + '.html')
+
+
+
+
+@app.route('/list/<uid>')
+def my_list(uid):
+    print(uid)
+    return url_for("my_list", uid=1, id=2, id2=3)
+
+
+# @app.context_processor
+# def override_url_for():
+#     return dict(url_for=dated_url_for)
+
+
+# def dated_url_for(endpoint, **values):
+#     filename = None
+#     if endpoint == 'static':
+#         filename = values.get('filename', None)
+#     if filename:
+#         file_path = os.path.join(app.root_path, endpoint, filename)
+#         values['v'] = int(os.stat(file_path).st_mtime)
+#     return url_for(endpoint, **values)
+
+# @app.route('/map')
+# def map():
+#     start_coords = (46.9540700, 142.7360300)
+#     folium_map = folium.Map(location=start_coords, zoom_start=14)
+#     folium_map.save('templates/map.html')
+#     return render_template('test.html')
 
 # @app.route('/name/<nm>')  
 # def name_nm(nm):

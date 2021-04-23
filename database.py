@@ -20,6 +20,8 @@ class database:
     def __init__(self, path):
         if not os.path.exists(r'./database'):
             os.makedirs(r'./database')
+        if not os.path.exists(r'./maps'):
+            os.makedirs(r'./maps')
         self.conn = sqlite3.connect(path, check_same_thread=False)
         self.cur = self.conn.cursor()
         # PART 1: 
@@ -332,6 +334,18 @@ class database:
         JOIN restaurant_category ON restaurant_category.id = restaurant_information.id
         WHERE restaurant_category.city = "{}" AND restaurant_category.category = "{}"'''.format(city_name, category)
         return self.get_result(SELECT_RESTAURANT_TABLE, 5, False)
+    
+    def get_restaurant_location_and_name_by_category_and_city(self, city_name, category):
+        SELECT_RESTAURANT_TABLE = '''
+        SELECT name, coordinates_latitude, coordinates_longitude FROM restaurant_information
+        JOIN restaurant_category ON restaurant_category.id = restaurant_information.id
+        WHERE restaurant_category.city = "{}" AND restaurant_category.category = "{}"'''.format(city_name, category)
+        return self.get_result(SELECT_RESTAURANT_TABLE, 3, False)
+
+    def get_city_location_by_city_id(self, city_id):
+        SELECT_CITY_LOCATION = '''
+        SELECT lat, lng FROM us_states WHERE id = "{}"'''.format(city_id)
+        return self.get_result(SELECT_CITY_LOCATION, 2)
 
     def get_restaurant_category_all(self):
         SELECT_DISTINCT_RESTAURANT_CATEGORY = "SELECT DISTINCT alias, title FROM restaurant_category_information WHERE country_whitelist = 'US'"
