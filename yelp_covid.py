@@ -66,9 +66,15 @@ def make_info_readable(table_basic_info):
         string_1 = ''
         string_2 = ''
         for ele in dataset[0]:
-            string_1 += str(ele[0]) + ' : ' + str(ele[1]) + '<br>'
+            if ele[1]:
+                string_1 += str(ele[0]) + ' : ✔<br>'
+            else:
+                string_1 += str(ele[0]) + ' : ✖<br>'
         for ele in dataset[1]:
-            string_2 += str(ele[0]) + ' : ' + str(ele[1]) + '<br>'
+            if ele[1]:
+                string_2 += str(ele[0]) + ' : ✔<br>'
+            else:
+                string_2 += str(ele[0]) + ' : ✖<br>'
         covid_info.append([string_1, string_2])
         print(string_1)
         print(string_2)
@@ -102,8 +108,6 @@ def get_map(city_location, restaurant_locations_data):
 
     sw = df[['Lat', 'Long']].min().values.tolist()
     ne = df[['Lat', 'Long']].max().values.tolist()
-    print(sw)
-    print(ne)
 
     # m.fit_bounds([sw, ne]) 
     
