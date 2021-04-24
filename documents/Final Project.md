@@ -4,17 +4,15 @@
 
 *   **Github repo link:** https://github.com/Huadous/final-project
 
-*   **README**
+*   **README:** This program uses the API provided by Yelp Fusion. The **API verification key** is very easy to apply, please apply through this link: https://www.yelp.com/fusion. Sign up for an account and manage an app to gain the API Key. Then, you need to create a file named `secrets.py` and copy this variable  `API_KEY = 'your_api_key'` into the file to support the program.
 
-    This program mainly uses the API provided by Yelp Fusion. The **API verification key** is also very easy to apply, please apply through this link: https://www.yelp.com/fusion. Sign up for an account and manage apps on the website which will contain an API Key. You need to create a file named `secrets.py` and copy this variable into the file `API_KEY = 'your_api_key'`.
+    The entire program is built within the **Flask app**, and the interaction is relatively simple. The main thing is to use the **three drop-down menus** to select the state, the city in state, and the available restaurant types. After selecting the state and city, statistical information about different categories will be displayed. Then you can choose your favorite category based on them. At this time, the information of the restaurants in that category will be displayed in a table, or you can click the **Map button** to display their locations. In the table, you can click the **"Click here" buttons** to enter the detailed information page of the restaurant.
 
-    The entire app is built within the **flask** framework, and the human-computer interaction is relatively simple. The main thing is to use the **three drop-down menus** to select the state, the city in state, and the available restaurant categories. After selecting the state and city, statistical information about different categories will be displayed. Then you can choose your favorite restaurant category based on them. At this time, the information of the restaurants in that category will be displayed in the form of a table, or you can click the **Map button** to display the location of the restaurants. In the table, you can click the **"Click here" button** to enter the detailed information page of the restaurant.
-
-*   **Required Python packages**
-
-    requests, plotyly, folium, pandas, flask and bs4.
+*   **Required Python packages:** requests, plotyly, folium, pandas, flask and bs4.
 
 ## Data sources
+
+***Data source 1:***(4 points)Multiple related data files(one>1000 records).(source1,2,3) ***Data source 2:***(4 points)Web API requires API key✣.(source 4) ***Data source 3:***(8 points)Crawling and scraping multiple pages✣.(source 5)
 
 ### Categories information
 
@@ -41,11 +39,11 @@
 
 *   **Origin:** [Documentation](https://www.yelp.com/developers/documentation/v3/business_search)  **Format:** JSON$\text{(> 1000 records)}[\approx\infty]\{[50,1000]\text{ for each type will be used}\}$
 
-    `GET https://api.yelp.com/v3/businesses/search` ( Each request can only get up to 50 results. you still can only get up to 1000 results using multiple queries and combinations of the "limit" and "offset" parameters)
+    `GET https://api.yelp.com/v3/businesses/search` ( Each request can only get up to 50 results and get up to 1000 results using multiple queries and combinations of the "limit" and "offset" )
 
 *   **Data access and caching** : The Yelp Fusion API uses private key to authenticate. I used cache.
 
-*   **Summary of data** : What I'm trying to get from this API is the data of different categories of restaurants. Each request can get up to 50 results. In order to make the flask app faster, I decided to let each type of category of the restaurant only gets 50 records at most to draw the average rating bar plot. There are approximately 200 types of restaurants available in yelp in the US. Then, each plot needs nearly 10000 records of restaurants(The restaurant may not be completely unique, because the restaurant may have more than one category)
+*   **Summary of data** : What I'm trying to get from this API is the data of different categories of restaurants. In order to make the flask app faster, I decided to let each type of category of the restaurant only gets 50 records at most to draw the average rating bar plot. There are approximately 200 types of restaurants available in yelp in the US. Then, each plot needs nearly 10000 records of restaurants(The restaurant may not be completely unique, because the restaurant may have more than one category)
 
 *   ***Important fields in "businesses":*** ***"categories:"*** List of category title and alias pairs associated with this business.  ***"id":*** Unique Yelp ID of this business. Example: `'4kMBvIEWPxWkWKFN__8SxQ'`. ***"name":*** Name of this business. ***"rating":*** Rating for this business. ***"coordinates":*** Coordinates of this business.
 
@@ -58,7 +56,9 @@
 
 ## Database
 
-#### *Database schema*
+### Database schema
+
+It contains all the restaurant categories (not all the categories provided by yelp fusion)
 
 ```sqlite
 CREATE TABLE IF NOT EXISTS restaurant_category_information(
@@ -67,7 +67,7 @@ CREATE TABLE IF NOT EXISTS restaurant_category_information(
 "country_whitelist"	TEXT # Which countries offer searches in this category);
 ```
 
-It contains all the restaurant categories (not all the categories provided by yelp fusion)
+ISO 3166-1 alpha-2 codes are two-letter country codes. This form is suitable for filtering which categories are available in which countries (although my program is only used in the United States).
 
 ```sqlite
 CREATE TABLE IF NOT EXISTS iso_3166_1_alpha_2_code(
@@ -76,7 +76,7 @@ CREATE TABLE IF NOT EXISTS iso_3166_1_alpha_2_code(
       	PRIMARY KEY("Code"));
 ```
 
-ISO 3166-1 alpha-2 codes are two-letter country codes defined in ISO 3166-1, part of the ISO 3166 standard published by the International Organization for Standardization (ISO), to represent countries, dependent territories, and special areas of geographical interest. This form is suitable for filtering which categories are available in which countries (although my program is only used in the United States).
+The purpose of this form is to help users select a certain city in a certain state, and then facilitate the flask application to continue to deal with subsequent statistical problems of different categories of restaurant ratings.Because location is needed when searching, all the location is associated with the search record table.
 
 ```sqlite
 CREATE TABLE IF NOT EXISTS us_states(
@@ -100,7 +100,7 @@ CREATE TABLE IF NOT EXISTS us_states(
 PRIMARY KEY("id"));
 ```
 
-The purpose of this form is to help users select a certain city in a certain state, and then facilitate the flask application to continue to deal with subsequent statistical problems of different categories of restaurant ratings. You can see it from the pic in the *Interaction and Presentation Plans* part. Because location is needed when searching, all the location is associated with the search record table (restaurant_category_fetch).
+This table is used to record restaurant information. Through the search api provided by yelp fusion, information related to the search results can be collected. I will store the restaurant information obtained by each search in the database, because restaurant information is not frequently updated data. 
 
 ```sqlite
 CREATE TABLE IF NOT EXISTS restaurant_information(
@@ -123,7 +123,7 @@ CREATE TABLE IF NOT EXISTS restaurant_information(
 PRIMARY KEY("id"));
 ```
 
-This table is used to record restaurant information. Through the search api provided by yelp fusion, information related to the search results can be collected. I will store the restaurant information obtained by each search in the database, because restaurant information is not frequently updated data. 
+This is a table that records each search, which contains necessary information including location, category, and returned shop id. They are respectively associated with the three tables, please see the follow-up for details. This table may change in the future, or there is another table to filter the information of the categories of valid stores.
 
 ```sqlite
 CREATE TABLE IF NOT EXISTS restaurant_category_fetch (
@@ -131,8 +131,6 @@ CREATE TABLE IF NOT EXISTS restaurant_category_fetch (
 "category"	TEXT NOT NULL, # searched category(the same as us_states.city_ascii)
 "city" TEXT NOT NULL # searched city(the same as restaurant_category_information.title));
 ```
-
-This is a table that records each search, which contains necessary information including location, category, and returned shop id. They are respectively associated with the three tables, please see the follow-up for details. This table may change in the future, or there is another table to filter the information of the categories of valid stores.
 
 #### *Foreign key-primary key relations*
 
@@ -188,7 +186,7 @@ Besides the flask app, I also provide the **logging information** in the command
 
 ### Brief instructions
 
-
+The entire program is built within the **Flask app**, and the interaction is relatively simple. The main thing is to use the **three drop-down menus** to select the state, the city in state, and the available restaurant types. After selecting the state and city, statistical information about different categories will be displayed. Then you can choose your favorite category based on them. At this time, the information of the restaurants in that category will be displayed in a table, or you can click the **Map button** to display their locations. In the table, you can click the **"Click here" buttons** to enter the detailed information page of the restaurant.
 
 ## Demo Link
 
