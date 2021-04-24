@@ -1,60 +1,18 @@
-import requests
-import sqlite3
-import json
-import plotly
-import plotly.graph_objs as go
 import database
 import cache
 import yelp_fusion
-import copy
 import yelp_covid
 import folium
-import time
 
-import pandas as pd
-import numpy as np
-
-from flask import Flask, render_template, request, send_file, url_for
-from flask_wtf import Form
-from wtforms import SelectField
-from bs4 import BeautifulSoup
-
-
-from secrets import API_KEY
-
-
+from flask import Flask, render_template, request, send_file
 
 cache.make_path()
 yelp_covid.make_path()
 path = './database/db.sqlite'
 db = database.database(path)
 
-class SelectForm(Form):
-    country = SelectField('Country', choices=[
-        ('us','USA'),('gb','Great Britain'),('ru','Russia')])
-
-
-# exit()
-
-
-
-# r = requests.get(business_search_url, headers=headers, params=params)
-# data = json.loads(r.text)
-
-# hello = restaurant.restaurant(json=data['businesses'][0])
-
 
 app = Flask(__name__)
-
-# app.config.from_object('config')
-# curCategory = ''
-# curCategoryList = []
-# curCategoryList_str = []
-
-# @app.route('/new')
-# def new():
-#     form = SelectForm()
-#     return render_template('new.html', form = form )
 
 @app.route('/')
 def index():
@@ -140,76 +98,6 @@ def details(id):
     print('[FLASK]->details:                [restaurant_id]-> ' + id)
     print('[FLASK]->details: ------------------------------------------------------')
     return render_template('details.html', details=text)
-
-
-# @app.route('/list/<uid>')
-# def my_list(uid):
-#     print('[FLASK]->list: ---------------------------------------------------------')
-#     print(uid)
-#     return url_for("my_list", uid=1, id=2, id2=3)
-
-
-# @app.context_processor
-# def override_url_for():
-#     return dict(url_for=dated_url_for)
-
-
-# def dated_url_for(endpoint, **values):
-#     filename = None
-#     if endpoint == 'static':
-#         filename = values.get('filename', None)
-#     if filename:
-#         file_path = os.path.join(app.root_path, endpoint, filename)
-#         values['v'] = int(os.stat(file_path).st_mtime)
-#     return url_for(endpoint, **values)
-
-# @app.route('/map')
-# def map():
-#     start_coords = (46.9540700, 142.7360300)
-#     folium_map = folium.Map(location=start_coords, zoom_start=14)
-#     folium_map.save('templates/map.html')
-#     return render_template('test.html')
-
-# @app.route('/name/<nm>')  
-# def name_nm(nm):
-#     return render_template('name.html', name=nm)
-
-# @app.route('/headlines/<nm>')
-# def headlines_nm(nm):
-#     url = 'https://api.nytimes.com/svc/topstories/v2/technology.json?api-key=xeFKNh4VSVnb3NXLeVacjQZaBM8GW5js'
-#     r = requests.get(url)
-#     topFive = json.loads(r.text)['results'][0:6]
-#     titles = []
-#     for ele in topFive:
-#         titles.append(ele['title'])
-#         urls.append(ele['url'])
-#     return render_template('headlines.html', name=nm, titles=titles)
-
-# @app.route('/links/<nm>')
-# def links_nm(nm):
-#     url = 'https://api.nytimes.com/svc/topstories/v2/technology.json?api-key=xeFKNh4VSVnb3NXLeVacjQZaBM8GW5js'
-#     r = requests.get(url)
-#     topFive = json.loads(r.text)['results'][0:6]
-#     titles = []
-#     urls = []
-#     for ele in topFive:
-#         titles.append(ele['title'])
-#         urls.append(ele['url'])
-#     return render_template('links.html', name=nm, titles=titles, urls=urls)
-
-# @app.route('/images/<nm>')
-# def images_nm(nm):
-#     url = 'https://api.nytimes.com/svc/topstories/v2/technology.json?api-key=xeFKNh4VSVnb3NXLeVacjQZaBM8GW5js'
-#     r = requests.get(url)
-#     topFive = json.loads(r.text)['results'][0:6]
-#     titles = []
-#     urls = []
-#     imgs = []
-#     for ele in topFive:
-#         titles.append(ele['title'])
-#         urls.append(ele['url'])
-#         imgs.append(ele['multimedia'][0]['url'])
-#     return render_template('images.html', name=nm, titles=titles, urls=urls, imgs=imgs)
 
 if __name__ == '__main__':
     print('starting Flask app', app.name) 

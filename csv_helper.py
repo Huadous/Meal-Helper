@@ -1,7 +1,4 @@
-import json
-import pprint
 from csv import DictReader
-import os
 
 def csv_to_dict(path):
     try:

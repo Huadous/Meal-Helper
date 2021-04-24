@@ -1,17 +1,10 @@
 import requests
-import sqlite3
-import json
-import plotly
-import plotly.graph_objs as go
-import database
 import cache
 import folium
 import time
 import os
 
-
 import pandas as pd
-import numpy as np
 
 from bs4 import BeautifulSoup
 from folium import CustomIcon
@@ -91,16 +84,6 @@ def make_info_readable(table_basic_info):
         print ("[YELP_COVID]->create_table_with_data_information:                   [{:3.0%}]".format(len(covid_info)/len(table_basic_info)))
     return covid_info
 
-# def draw_custom_icon(m, restaurant_locations_data):
-#     for data in restaurant_locations_data:
-#         marker = folium.Marker(
-#             location=[data[1], data[2]], 
-#             popup=data[0],
-#             icon=folium.Icon(color="red",icon="glyphicon glyphicon-cutlery")).add_to(m)
-        # folium.Marker(
-        # location=[25.0431, 121.539723], 
-        # icon=folium.Icon(color="red",icon="fa-truck", prefix='fa')).add_to(m)
- 
 def get_map(city_location, restaurant_locations_data):
     
     df = pd.DataFrame(restaurant_locations_data, columns=['name', 'Lat', 'Long'])

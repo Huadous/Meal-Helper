@@ -7,8 +7,6 @@ import os
 import datetime
 
 from distutils.util import strtobool
-from flask import Flask, render_template
-from bs4 import BeautifulSoup
 
 from secrets import API_KEY
 
