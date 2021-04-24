@@ -1,7 +1,6 @@
 import requests
 import sqlite3
 import json
-import restaurant
 import plotly
 import plotly.graph_objs as go
 import database
@@ -17,6 +16,7 @@ yelp_fusion_business_search_url = 'https://api.yelp.com/v3/businesses/search'
 headers = {"Authorization": "Bearer {}".format(API_KEY)}
 
 def api_search(category, location, offset=0):
+    print('[YELP_FUSION]->api_search:       [API]-> '+ category)
     file_name = category + '_' + location + '_' + str(offset)
     file_type = 'restaurant_search'
     api_search = cache.sync_cache(file_name, file_type)
@@ -53,6 +53,25 @@ def api_search_all_data(category, location, db):
 def create_average_rating(category, city, db):
     return db.get_average_rating_by_category_and_city(category, city)
 
+def details(id, db):
+    text = db.get_restaurant_info_by_id(id)
+    text = list(text)
+    if len(text[12]) > 0:
+        text[12] = text[12].replace('[', '<br>')
+        text[12] = text[12].replace(']', '')
+        text[12] = text[12].replace('{', '')
+        text[12] = text[12].replace('}', '')
+        text[12] = text[12].replace('"', '')
+        text[12] = text[12].replace(',', '<br>')
+    if len(text[10]) > 0:
+        text[10] = text[10].replace('[', '')
+        text[10] = text[10].replace(']', '')
+        text[10] = text[10].replace('{', '')
+        text[10] = text[10].replace('}', '')
+        text[10] = text[10].replace('"', '')
+        text[10] = text[10].replace(',', '<br>')
+    return text
+
 def create_average_rating_and_count_graph_with_data(city, db, dataonly=True): # city_name
     restaurant_category_all = db.get_restaurant_category_all()
     average_rating = []
@@ -63,7 +82,7 @@ def create_average_rating_and_count_graph_with_data(city, db, dataonly=True): # 
         average_rating_data, total_number_data = create_average_rating(category[0], city, db)
         average_rating.append(average_rating_data)
         total_number.append(total_number_data)
-        print ("\r Loading... [{}/{}]".format(len(total_number), len(restaurant_category_all)), end="")
+        print ("[YELP_FUSION]->create_average_rating_and_count_graph_with_data:      [{:3.0%}]".format(len(total_number)/len(restaurant_category_all)))
     xvals1 = []
     yvals1 = []
     xvals2 = []

@@ -178,7 +178,7 @@ h1,h2,h3,h4,h5,h6 {
 	display:flex;
 	justify-content:center;
 	align-items:center;
-	min-height:100vh;
+	/* min-height:100vh; */
 }
 
 .table {
@@ -228,7 +228,22 @@ h1,h2,h3,h4,h5,h6 {
 	padding-right: 20px;
 }
 
+::-webkit-scrollbar {
+  background: transparent;
+  width: 0px;
+  height: 10px
+}
 
+::-webkit-scrollbar-thumb {
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  background-color: #e1e1e1;
+  width: 0px;
+  height: 6px;
+  border: 2px solid transparent;
+  background-clip: content-box
+}
 </style>
 	
 	
@@ -290,7 +305,7 @@ h1,h2,h3,h4,h5,h6 {
 				<div class="father1">
 					<div class="son">
 						<button class="button" id="bt_display" onclick="show()">
-							<span>
+							<span id="bt_info">
 								Map
 							</span>
 						</button>
@@ -332,7 +347,7 @@ h1,h2,h3,h4,h5,h6 {
 						<div class="table-data">{{covid_info[i][0]|safe}}</div>
 						<div class="table-data">{{covid_info[i][1]|safe}}</div>
 						<!-- <div class="table-data">{{table_basic_info[i][4]}}</div> -->
-						<div class="table-data">Click here</div>
+						<div class="table-data"><a href="{{url_for('details', id = table_basic_info[i][4])}}">Click here</a></div>
 					</div>
 				{% endfor %}
 			</div>	
@@ -365,6 +380,8 @@ h1,h2,h3,h4,h5,h6 {
         document.getElementById('map').style.display="none";
 	}
     function show(){  
+		contain = document.getElementById('bt_info').innerText
+		document.getElementById('bt_info').innerText = (contain == "Map") ? "Back" : "Map"
         display = document.getElementById('map').style.display
         document.getElementById('map').style.display = (display== "block") ? "none " : "block";
         display = document.getElementById('table1').style.display

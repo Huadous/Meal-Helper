@@ -20,10 +20,10 @@ class database:
     def __init__(self, path):
         if not os.path.exists(r'./database'):
             os.makedirs(r'./database')
-        if not os.path.exists(r'./maps'):
-            os.makedirs(r'./maps')
+        print("[DATABASE]->make_path:           [YES]-> './database'")
         self.conn = sqlite3.connect(path, check_same_thread=False)
         self.cur = self.conn.cursor()
+        print("[DATABASE]->link:                [YES]-> '" + path + "'")
         # PART 1: 
         # loading the file(.json) downloads from Yelp Fusion which contains 
         # categories, I filter the restaurant part and also load it into database
@@ -36,7 +36,7 @@ class database:
             r = requests.get(categories_information_url_json)
             categories_information =json.loads(r.text)
             cache.save_cache(file_name, file_type, categories_information)
-        
+
         file_name = 'restaurant_category_information'
         file_type = 'categories'
         restaurant_category_information = cache.sync_cache(file_name, file_type)
@@ -54,6 +54,7 @@ class database:
             "country_whitelist"	TEXT
         );'''
         self.cur.execute(CREATE_RESTAURANT_CATEGORY_INFORMATION)
+        print("[DATABASE]->creat_table:         [YES]-> '" + file_name + "'")
 
         INSERT_RESTAURANT_CATEGORY_INFORMATION = '''
             INSERT INTO restaurant_category_information
@@ -64,7 +65,7 @@ class database:
                 continue
             for country in restaurant_type["country_blacklist"]:
                 self.cur.execute(INSERT_RESTAURANT_CATEGORY_INFORMATION, [restaurant_type['title'], restaurant_type['alias'], country])
-
+        print("[DATABASE]->insert:              [YES]-> '" + file_name + "'")
         # PART 2:
         # 1. Load the Country code follows ISO 3166-1 alpha-2 code. Also load it into database.
         # Which may be used in the categories.
@@ -89,13 +90,14 @@ class database:
             PRIMARY KEY("Code")
         );'''
         self.cur.execute(CREATE_ISO_3166_1_ALPHA_2_CODE)
+        print("[DATABASE]->creat_table:         [YES]-> '" + file_name + "'")
 
         INSERT_ISO_3166_1_ALPHA_2_CODE = '''
         INSERT OR IGNORE INTO iso_3166_1_alpha_2_code
         VALUES (?, ?)'''
         for country in iso_3166_1_alpha_2_code:
             self.cur.execute(INSERT_ISO_3166_1_ALPHA_2_CODE, [country['Code'], country['Name']])
-
+        print("[DATABASE]->insert:              [YES]-> 'iso_3166_1_alpha_2_code'")
 
         source_path = './src/location/uscities.csv'
         file_name = 'us_cities'
@@ -126,8 +128,9 @@ class database:
             "id"	TEXT,
             PRIMARY KEY("id")
         );'''
-
         self.cur.execute(CREATE_US_CITIES)
+        print("[DATABASE]->creat_table:         [YES]-> '" + file_name + "'")
+        
         INSERT_US_CITIES = '''
         INSERT OR REPLACE INTO us_states
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'''
@@ -153,6 +156,7 @@ class database:
                 city['id']
             ]
             self.cur.execute(INSERT_US_CITIES, insert_data)
+        print("[DATABASE]->insert:              [YES]-> 'us_states'")
 
         CREATE_RESTAURANT_INFORMATION = '''
             CREATE TABLE IF NOT EXISTS "restaurant_information" (
@@ -174,6 +178,8 @@ class database:
                 PRIMARY KEY("id")
             );'''
         self.cur.execute(CREATE_RESTAURANT_INFORMATION)
+        print("[DATABASE]->creat_table:         [YES]-> 'restaurant_information'")
+
         CREATE_RESTAURANT_CATEGORY_FETCH = '''
         CREATE TABLE IF NOT EXISTS restaurant_category_fetch (
             "id"	TEXT NOT NULL,
@@ -182,6 +188,8 @@ class database:
             "time" TEXT NOT NULL
         );'''
         self.cur.execute(CREATE_RESTAURANT_CATEGORY_FETCH)
+        print("[DATABASE]->creat_table:         [YES]-> 'restaurant_category_fetch'")
+
         CREATE_RESTAURANT_CATEGORY = '''
         CREATE TABLE IF NOT EXISTS restaurant_category (
             "id"	TEXT NOT NULL,
@@ -191,6 +199,8 @@ class database:
             PRIMARY KEY("unique_str")
         );'''
         self.cur.execute(CREATE_RESTAURANT_CATEGORY)
+        print("[DATABASE]->creat_table:         [YES]-> 'restaurant_category'")
+
         CREATE_SEARCH_INDEX = '''
         CREATE TABLE IF NOT EXISTS search_index (
             "id"	INTEGER,
@@ -199,6 +209,8 @@ class database:
             PRIMARY KEY("id" AUTOINCREMENT)
         );'''
         self.cur.execute(CREATE_SEARCH_INDEX)
+        print("[DATABASE]->creat_table:         [YES]-> 'search_index'")
+
         CREATE_SEARCH_RESULTS = '''
         CREATE TABLE IF NOT EXISTS search_results (
             "id"	INTEGER,
@@ -208,6 +220,8 @@ class database:
             PRIMARY KEY("id" AUTOINCREMENT)
         );'''
         self.cur.execute(CREATE_SEARCH_RESULTS)
+        print("[DATABASE]->creat_table:         [YES]-> 'search_results'")
+
         self.conn.commit()
 
     def insert_restaurant_info(self, restaurants, category, city):
@@ -245,6 +259,10 @@ class database:
                 if category == ele['alias']:
                     self.cur.execute(INSERT_RESTAURANT_CATEGORY_FETCH, [check_exists('id', restaurant), category, city, str(datetime.datetime.now())[0:19]])
                     break
+        
+        print("[DATABASE]->insert:              [YES]-> 'restaurant_information'")
+        print("[DATABASE]->insert:              [YES]-> 'restaurant_category_fetch'")
+        print("[DATABASE]->insert:              [YES]-> 'restaurant_category'")
 
         self.conn.commit()
 
@@ -253,16 +271,22 @@ class database:
         INSERT INTO search_index
         VALUES (NULL, ?, ?)'''
         self.cur.execute(INSERT_SEARCH_INDEX, [city_id, state_id])
+        print("[DATABASE]->insert:              [YES]-> 'search_index'")
+
         SELECT_SEARCH_INDEX = '''
         SELECT DISTINCT last_insert_rowid() FROM search_index
         '''
         search_index = self.get_result(SELECT_SEARCH_INDEX, 1)
+        print("[DATABASE]->select:              [YES]-> 'search_index'")
+
         INSERT_SEARCH_RESULTS = '''
         INSERT INTO search_results
         VALUES (NULL, ?, ?, ?)
         '''
         for i in range(len(categories)):
             self.cur.execute(INSERT_SEARCH_RESULTS, [search_index, categories[i], categories_str[i]])
+        print("[DATABASE]->insert:              [YES]-> 'search_results'")
+
         self.conn.commit()
         return search_index
 
@@ -271,6 +295,7 @@ class database:
         SELECT category FROM search_results
         WHERE search_index={}
         '''.format(search_index)
+        print("[DATABASE]->select:              [YES]-> 'search_results'")
         return self.get_result(SELECT_SEARCH_RESULTS, 1)
     
     def get_category_str_by_search_index(self, search_index):
@@ -278,6 +303,7 @@ class database:
         SELECT category_str FROM search_results
         WHERE search_index={}
         '''.format(search_index)
+        print("[DATABASE]->select:              [YES]-> 'search_results'")
         return self.get_result(SELECT_SEARCH_RESULTS, 1)
 
     def get_category_alias_by_category_title(self, category_title):
@@ -285,6 +311,7 @@ class database:
         SELECT DISTINCT alias FROM restaurant_category_information
         WHERE title="{}"
         '''.format(category_title)
+        print("[DATABASE]->select:              [YES]-> 'restaurant_category_information'")
         return self.get_result(SELECT_SEARCH_RESULTS, 1)
 
     def get_city_and_state_by_search_index(self, search_index):
@@ -292,16 +319,19 @@ class database:
         SELECT city_id, state_id FROM search_index
         WHERE id={}
         '''.format(search_index)
+        print("[DATABASE]->select:              [YES]-> 'search_index'")
         return self.get_result(SELECT_SEARCH_INDEX, 2)
 
 
     def get_states_information(self):
         SELECT_STATES_INFORMATION = '''
         SELECT DISTINCT state_name, state_id FROM us_states'''
+        print("[DATABASE]->select:              [YES]-> 'us_states'")
         return self.get_result(SELECT_STATES_INFORMATION, 2)
 
     def get_cities_both_information_by_state_id(self, state_id):
         SELECT_CITIES_INFORMATION = 'SELECT DISTINCT city_ascii, id FROM us_states WHERE state_id == "{}"'.format(state_id)
+        print("[DATABASE]->select:              [YES]-> 'us_states'")
         return self.get_result(SELECT_CITIES_INFORMATION, 2)
 
     def get_average_rating_by_category_and_city(self, category, city):
@@ -311,6 +341,7 @@ class database:
         JOIN restaurant_category ON restaurant_information.id = restaurant_category.id
         WHERE restaurant_category.category = '{}' AND restaurant_category.city = '{}'
         '''.format(category, city)
+        print("[DATABASE]->select:              [YES]-> 'restaurant_information', 'restaurant_category'")
         return self.get_result(CREATE_AVERAGE_RATING, 2)
 
     def get_result(self, query, num, nolist=True):
@@ -330,9 +361,10 @@ class database:
 
     def get_restaurant_table_by_category_and_city(self, city_name, category):
         SELECT_RESTAURANT_TABLE = '''
-        SELECT name, url, image_url, rating, display_phone FROM restaurant_information
+        SELECT name, url, image_url, rating,restaurant_information.id FROM restaurant_information
         JOIN restaurant_category ON restaurant_category.id = restaurant_information.id
         WHERE restaurant_category.city = "{}" AND restaurant_category.category = "{}"'''.format(city_name, category)
+        print("[DATABASE]->select:              [YES]-> 'restaurant_information', 'restaurant_category'")
         return self.get_result(SELECT_RESTAURANT_TABLE, 5, False)
     
     def get_restaurant_location_and_name_by_category_and_city(self, city_name, category):
@@ -340,27 +372,40 @@ class database:
         SELECT name, coordinates_latitude, coordinates_longitude FROM restaurant_information
         JOIN restaurant_category ON restaurant_category.id = restaurant_information.id
         WHERE restaurant_category.city = "{}" AND restaurant_category.category = "{}"'''.format(city_name, category)
+        print("[DATABASE]->select:              [YES]-> 'restaurant_information', 'restaurant_category'")
         return self.get_result(SELECT_RESTAURANT_TABLE, 3, False)
+    
+    def get_restaurant_info_by_id(self, id):
+        SELECT_RESTAURANT_INFO = '''
+        SELECT * FROM restaurant_information
+        WHERE id = "{}"'''.format(id)
+        print("[DATABASE]->select:              [YES]-> 'restaurant_information'")
+        return self.get_result(SELECT_RESTAURANT_INFO, 15)
 
     def get_city_location_by_city_id(self, city_id):
         SELECT_CITY_LOCATION = '''
         SELECT lat, lng FROM us_states WHERE id = "{}"'''.format(city_id)
+        print("[DATABASE]->select:              [YES]-> 'us_states'")
         return self.get_result(SELECT_CITY_LOCATION, 2)
 
     def get_restaurant_category_all(self):
         SELECT_DISTINCT_RESTAURANT_CATEGORY = "SELECT DISTINCT alias, title FROM restaurant_category_information WHERE country_whitelist = 'US'"
+        print("[DATABASE]->select:              [YES]-> 'restaurant_category_information'")
         return self.get_result(SELECT_DISTINCT_RESTAURANT_CATEGORY, 2)
 
     def get_state_name_by_city_id(self, city):
         SELECT_STATE_NAME = 'SELECT state_name FROM us_states WHERE id == "{}"'.format(city)
+        print("[DATABASE]->select:              [YES]-> 'us_states'")
         return self.get_result(SELECT_STATE_NAME, 1)
     
     def get_state_id_by_city_id(self, city):
         SELECT_STATE_ID = 'SELECT state_id FROM us_states WHERE id == "{}"'.format(city)
+        print("[DATABASE]->select:              [YES]-> 'us_states'")
         return self.get_result(SELECT_STATE_ID, 1)
 
     def get_city_name_by_city_id(self, city_id):
         SELEECT_CITY_NAME = 'SELECT city_ascii FROM us_states WHERE id == "{}"'.format(city_id)
+        print("[DATABASE]->select:              [YES]-> 'us_states'")
         return self.get_result(SELEECT_CITY_NAME, 1)
 
   
