@@ -14,7 +14,7 @@ def make_path():
     if not os.path.exists(r'./cache/covid_services'):
         os.makedirs(r'./cache/covid_services')
     print("[CACHE]->make_path:              [YES]-> './cache/categories'")
-    if not os.path.exists(r'./cache/covid_services'):
+    if not os.path.exists(r'./cache/restaurant_search'):
         os.makedirs(r'./cache/restaurant_search')
     print("[CACHE]->make_path:              [YES]-> './cache/restaurant_search'")
 

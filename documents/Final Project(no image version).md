@@ -156,44 +156,6 @@ CREATE TABLE IF NOT EXISTS search_results (
 PRIMARY KEY("id" AUTOINCREMENT));
 ```
 
-### Foreign key-primary key relation
-
-<img src="./images/diagram-20210425 (1).png" alt="diagram-20210425 (1)" style="zoom: 28%;" />
-
-#### *Screenshots of the data*
-
-*   **Table 1:** restaurant_category_information
-
-<img src="./images/image-20210425195407265.png" alt="image-20210425195407265" style="zoom:18%;" />
-
-*   **Table 2:** iso_3166_1_alpha_2_code
-
-<img src="/Users/huayu/Documents/canvas/finalproject/documents/images/image-20210425195441701.png" alt="image-20210425195441701" style="zoom:18%;" />
-
-*   **Table 3:** us_states
-
-<img src="/Users/huayu/Documents/canvas/finalproject/documents/images/image-20210425195534843.png" alt="image-20210425195534843" style="zoom:18%;" />
-
-*   **Table 4:** restaurant_information
-
-<img src="/Users/huayu/Documents/canvas/finalproject/documents/images/image-20210425195650984.png" alt="image-20210425195650984" style="zoom:18%;" />
-
-*   **Table 5:** restaurant_category_fetch
-
-<img src="/Users/huayu/Documents/canvas/finalproject/documents/images/image-20210425195726827.png" alt="image-20210425195726827" style="zoom:18%;" />
-
-*   **Table 6:** restaurant_category
-
-<img src="/Users/huayu/Documents/canvas/finalproject/documents/images/image-20210425195858888.png" alt="image-20210425195858888" style="zoom:18%;" />
-
-*   **Table 7:** search_index
-
-<img src="/Users/huayu/Documents/canvas/finalproject/documents/images/image-20210425195931017.png" alt="image-20210425195931017" style="zoom:18%;" />
-
-*   **Table 8:** search_results
-
-<img src="/Users/huayu/Documents/canvas/finalproject/documents/images/image-20210425195958090.png" alt="image-20210425195958090" style="zoom:18%;" />
-
 ## Interaction and Presentation Options
 
 ###  Description

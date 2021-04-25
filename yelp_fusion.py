@@ -1,5 +1,6 @@
 import requests
 import json
+import plotly
 import plotly.graph_objs as go
 import database
 import cache

@@ -99,6 +99,10 @@ def details(id):
     print('[FLASK]->details: ------------------------------------------------------')
     return render_template('details.html', details=text)
 
+@app.route('/readme')
+def readme():
+    return send_file('./templates/readme.html')
+
 if __name__ == '__main__':
     print('starting Flask app', app.name) 
     app.run(debug=True)
