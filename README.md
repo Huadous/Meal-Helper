@@ -16,28 +16,28 @@
 
 ### Categories information
 
-*   **Origin:** [Documentation](https://www.yelp.com/developers/documentation/v3/all_category_list)  [Download](https://www.yelp.com/developers/documentation/v3/all_category_list/categories.json)  **Format:** JSON$\text{(> 1000 records)}[\approx\text{1500}]\{192\text{ used}\}$
+*   **Origin:** [Documentation](https://www.yelp.com/developers/documentation/v3/all_category_list)  [Download](https://www.yelp.com/developers/documentation/v3/all_category_list/categories.json)  **Format:** JSON
 *   **Data access and caching:** downloaded directly without additional verification methods, I used cache.
 *   **Summary of data:** It contains information about categories and available countries. Then, this data can be used as a benchmark for restaurant category search. Because this file contains all the categories. What I need to do is to filter out the category of restaurants from all categories.
 *   **Important fields:** ***"alias":*** alias of the child category, offer a different name for title. ***"title":*** title of the child category. Alias will be used to find different type of restaurant. ***"parents":*** belongs to what parent category. ***"country_whitelist":*** available countries (without this field means **TO ALL THE COUNTRIES**).
 
 ### ISO 3166-1 alpha-2 code
 
-*   **Origin:** [Documentation](https://datahub.io/core/country-list)  [Download](https://datahub.io/core/country-list/r/data.json)  **Format:** JSON$\text{(< 1000 records)}[\approx\text{250}]\{250\text{ used}\}$
+*   **Origin:** [Documentation](https://datahub.io/core/country-list)  [Download](https://datahub.io/core/country-list/r/data.json)  **Format:** JSON
 *   **Data access and caching:** Downloaded directly without additional verification methods, I used cache.
 *   **Summary of data:** Because in the previous category file, there are information about different restaurant categories in which countries provide search services. Therefore, it is necessary to use the abbreviations of the names of each country in this file to determine whether this category can be searched in the US.
 *   **Important fields:** ***"Code":*** code of the country and improve its readability by providing the full name of the country. ***"Name":*** name of the country, which is better for human reading.
 
 ### United States Cities Database
 
-*   **Origin:** [Documentation](https://simplemaps.com/data/us-cities)  [Download](https://simplemaps.com/static/data/us-cities/1.73/basic/simplemaps_uscities_basicv1.73.zip)  **Format:** CSV$\text{(> 1000 records)}[\approx\text{28000}]\{28399\text{ used}\}$
+*   **Origin:** [Documentation](https://simplemaps.com/data/us-cities)  [Download](https://simplemaps.com/static/data/us-cities/1.73/basic/simplemaps_uscities_basicv1.73.zip)  **Format:** CSV
 *   **Data access and caching:** downloaded directly without additional verification methods. I used cache.
 *   **Summary of data:** The main usage of this data source is to provide an effective state-city relationship for the flask app. What's more, this data source have a very useful definition for city, city id, state and state id. I can use it as a mark for each city and state.
 *   **Important fields:** ***"city":*** name of the city. ***"city_ascii":*** ascii version. I will use it as each city's name. ***"state_id":*** abbreviation for state. It is more convenient as a mark of the state. ***"state_name":*** full state name. ***"id":*** unique id for each city, which can be the primary key for each city in the database.
 
 ### Using API key to get base information and do analysis
 
-*   **Origin:** [Documentation](https://www.yelp.com/developers/documentation/v3/business_search)  **Format:** JSON$\text{(> 1000 records)}[\approx\infty]\{[50,1000]\text{ for each type will be used}\}$
+*   **Origin:** [Documentation](https://www.yelp.com/developers/documentation/v3/business_search)  **Format:** JSON
 
     `GET https://api.yelp.com/v3/businesses/search` ( Each request can only get up to 50 results and get up to 1000 results using multiple queries and combinations of the "limit" and "offset" )
 
@@ -49,7 +49,7 @@
 
 ### Crawling and scraping multiple pages in Yelp to gain information related covid-19
 
-*   **Origin:** https://www.yelp.com/  **Format:** HTML$[\approx\infty]\{[50,1000]\text{ for each type will be used}\}$
+*   **Origin:** https://www.yelp.com/  **Format:** HTML
 *   **Data access and caching:** By crawling and scraping. I used cache.
 *   **Summary of data:** This part is not fixed, each restaurant has its own services dealing with covid-19. There are some basic services provided by yelp. But, the user and the owner of the restaurant can change the information on the webpage. I will get all of them from the site and provide it in my flask app to the users.
 *   **Important attributes:** ***"Updated Services":*** some basic services the restaurant can provide to the customer. ***"Health & Safety Measures:"*** what the health & satety measures the restaurant has implemented. 
