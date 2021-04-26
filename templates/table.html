@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<link rel="shortcut icon" href="static/avatar.png" type="image/x-icon" /> 
     <meta charset="utf8"/>
     <title>Simonhua_finalproject</title>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
@@ -365,8 +366,6 @@ h1,h2,h3,h4,h5,h6 {
 	function search_city(x) {
 		x.form.submit();
 		document.getElementById('loading').style.display='';
-		document.getElementById('table1').style.display="none";
-        document.getElementById('select3').style.display="none";
         document.getElementById('bt_display').style.display="none";
         document.getElementById('table1').style.display="none";
         document.getElementById('map').style.display="none";
@@ -374,7 +373,6 @@ h1,h2,h3,h4,h5,h6 {
 	function search_category(x) {
 		x.form.submit();
 		document.getElementById('loading').style.display='';
-		document.getElementById('table1').style.display="none";
         document.getElementById('bt_display').style.display="none";
         document.getElementById('table1').style.display="none";
         document.getElementById('map').style.display="none";
